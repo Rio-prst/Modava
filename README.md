@@ -244,7 +244,7 @@ Tujuannya untuk memastikan perubahan yang masuk tidak merusak aplikasi sebelum d
 | `dev` | Branch integrasi |
 | `feature/*` | Pengembangan fitur |
 
-Contoh:
+Contoh branch:
 
 ```text
 feature/cash-flow-tracker
@@ -257,3 +257,112 @@ Workflow pengembangan:
 ```text
 feature/* → Pull Request → dev → main
 ```
+
+---
+
+## Development Guidelines
+
+### Branch Naming
+
+Gunakan format berikut untuk setiap branch:
+
+```text
+feature/<feature-name>
+fix/<bug-name>
+refactor/<module-name>
+docs/<topic>
+chore/<task>
+```
+
+Contoh:
+
+```text
+feature/google-auth
+feature/cash-flow-tracker
+feature/crowdfunding-api
+
+fix/login-session
+
+refactor/legalitas-module
+
+docs/readme-update
+
+chore/setup-ci
+```
+
+---
+
+### Commit Convention
+
+Seluruh commit pada repository ini wajib mengikuti standar **Conventional Commits**.
+
+Format:
+
+```text
+<type>(scope): <description>
+```
+
+Contoh:
+
+```text
+feat(auth): implement Google authentication
+
+feat(cash-flow): add transaction form
+
+feat(crowdfunding): create campaign API
+
+fix(auth): handle expired JWT token
+
+refactor(legalitas): simplify validation logic
+
+docs(readme): update project documentation
+
+chore(ci): configure GitHub Actions
+```
+
+Jenis commit yang digunakan:
+
+| Type | Deskripsi |
+|------|-----------|
+| `feat` | Menambahkan fitur baru |
+| `fix` | Memperbaiki bug |
+| `refactor` | Mengubah struktur kode tanpa mengubah perilaku |
+| `docs` | Perubahan dokumentasi |
+| `style` | Perubahan formatting tanpa mengubah logika |
+| `test` | Menambah atau memperbarui pengujian |
+| `chore` | Konfigurasi, dependency, CI/CD, atau maintenance |
+
+---
+
+### Atomic Commits
+
+Setiap commit harus bersifat **atomic**, yaitu hanya berisi satu perubahan yang saling berkaitan.
+
+**Baik**
+
+```text
+feat(cash-flow): add transaction form
+
+feat(cash-flow): implement monthly summary
+
+fix(auth): handle expired JWT token
+```
+
+**Kurang Baik**
+
+```text
+feat: add login, dashboard, crowdfunding, navbar, fix bugs, update README
+```
+
+---
+
+### Pull Request Guidelines
+
+Sebelum membuat Pull Request ke branch `dev`, pastikan:
+
+- Menggunakan branch sesuai aturan penamaan.
+- Menggunakan Conventional Commit.
+- Satu Pull Request hanya untuk satu fitur atau satu perbaikan.
+- Tidak terdapat lint error.
+- Project dapat di-build tanpa error.
+- Seluruh perubahan telah diuji sebelum diajukan untuk review.
