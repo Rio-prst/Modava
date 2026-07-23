@@ -1,12 +1,15 @@
+import ExploreHeader from "@/components/crowdfunding/explore-header";
+import CategoryFilter from "@/components/crowdfunding/category-filter";
+import CampaignGrid from "@/components/crowdfunding/campaign-grid";
+import FloatingCta from "@/components/crowdfunding/floating-cta";
+
 export default function CrowdfundingPage() {
   return (
-    <>
-      <h1 className="text-2xl font-bold text-modava-text-dark">
-        Crowdfunding
-      </h1>
-      <p className="text-sm text-modava-text-muted mt-2">
-        Galang dana modal dari komunitas dan investor mikro.
-      </p>
-    </>
+    <div className="space-y-6 relative">
+      <ExploreHeader />
+      <CategoryFilter />
+      <CampaignGrid />
+      <FloatingCta />
+    </div>
   );
 }
