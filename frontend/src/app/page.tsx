@@ -1,19 +1,17 @@
-import Hero from "@/components/landing/hero";
-import Ekosistem from "@/components/landing/ekosistem";
-import SocialProof from "@/components/landing/social-proof";
-import Cta from "@/components/landing/cta";
-import Footer from "@/components/layout/footer";
+import NavbarMobile from "@/components/landing/navbar-mobile";
+import HeroMobile from "@/components/landing/hero-mobile";
+import FeatureCardsMobile from "@/components/landing/feature-cards-mobile";
+import RegulationFooter from "@/components/landing/regulation-footer";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-modava-bg flex flex-col">
-      <main className="flex-1 max-w-6xl mx-auto px-8 py-12 space-y-20">
-        <Hero />
-        <Ekosistem />
-        <SocialProof />
-        <Cta />
+      <NavbarMobile />
+      <main className="flex-1 space-y-8 pb-8">
+        <HeroMobile />
+        <FeatureCardsMobile />
       </main>
-      <Footer />
+      <RegulationFooter />
     </div>
   );
 }

@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --background: #f8f7f4;
-    --foreground: #0f2d2e;
+    --background: #FAF8F5;
+    --foreground: #0A2328;
     --card: 0 0% 100%;
     --card-foreground: #0f2d2e;
     --popover: 0 0% 100%;
@@ -28,6 +28,6 @@
     @apply border-[color:var(--border)];
   }
   body {
-    @apply bg-[#f8f7f4] text-[#0f2d2e];
+    @apply bg-modava-bg text-modava-text-dark;
   }
 }
