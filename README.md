@@ -51,14 +51,14 @@ Dikembangkan untuk **Veternity Beraksi 2026 – Web Development Competition**
 
 | Komponen | Teknologi |
 |----------|-----------|
-| Frontend | Next.js 14 (App Router) + TypeScript |
+| Frontend | Next.js 15 (App Router) + TypeScript |
 | Styling/UI | Tailwind CSS + shadcn/ui |
 | Form & Validasi | React Hook Form + Zod |
+| Authentication | Clerk (Google OAuth & Email Authentication) |
 | Backend | NestJS + TypeScript |
 | Database | Supabase PostgreSQL + Prisma ORM |
-| Authentication | NextAuth.js (Auth.js) + Google Provider + JWT |
-| Generate PDF | pdf-lib |
 | File Storage | Supabase Storage |
+| Generate PDF | pdf-lib |
 | CI/CD | GitHub Actions |
 | Containerization | Docker + Docker Compose |
 | Deployment | Vercel (Frontend) + Railway / Render (Backend) |
@@ -117,7 +117,8 @@ modava/
 
 ### Prasyarat
 
-- Node.js 18 atau lebih baru
+- Node.js 20 atau lebih baru
+- Akun Clerk
 - Akun Supabase
 - npm atau pnpm
 
@@ -135,7 +136,7 @@ npm run dev
 
 Akses aplikasi di:
 
-```
+```text
 http://localhost:3000
 ```
 
@@ -155,7 +156,7 @@ npm run start:dev
 
 API berjalan di:
 
-```
+```text
 http://localhost:4000
 ```
 
@@ -168,13 +169,9 @@ http://localhost:4000
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
 
-NEXTAUTH_URL=http://localhost:3000
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 
-NEXTAUTH_SECRET=
-
-GOOGLE_CLIENT_ID=
-
-GOOGLE_CLIENT_SECRET=
+CLERK_SECRET_KEY=
 ```
 
 ### backend/.env.example
@@ -182,16 +179,50 @@ GOOGLE_CLIENT_SECRET=
 ```env
 DATABASE_URL=
 
-JWT_SECRET=
-
-JWT_REFRESH_SECRET=
-
-PORT=4000
+CLERK_SECRET_KEY=
 
 SUPABASE_URL=
 
 SUPABASE_SERVICE_ROLE_KEY=
+
+PORT=4000
 ```
+
+---
+
+## Authentication Flow
+
+Authentication menggunakan **Clerk** dengan dukungan:
+
+- Google OAuth
+- Email & Password Authentication
+- Session Management
+- Route Protection
+- JWT Verification
+
+Alur autentikasi:
+
+```text
+User
+   │
+   ▼
+Clerk Authentication
+   │
+   ▼
+Frontend (Next.js)
+   │
+Bearer Token
+   ▼
+NestJS API
+   │
+Verify Clerk JWT
+   ▼
+Business Logic
+   ▼
+Supabase PostgreSQL
+```
+
+NestJS hanya bertugas melakukan **verifikasi token** dan menangani business logic aplikasi. Seluruh proses login, session, dan OAuth dikelola oleh Clerk.
 
 ---
 
@@ -214,12 +245,6 @@ services:
       - ./backend/.env
     ports:
       - "4000:4000"
-```
-
-Contoh `DATABASE_URL`:
-
-```env
-DATABASE_URL=postgresql://postgres:[password]@[project-ref].supabase.co:5432/postgres
 ```
 
 ---
@@ -305,13 +330,15 @@ Format:
 Contoh:
 
 ```text
-feat(auth): implement Google authentication
+feat(auth): integrate Clerk authentication
+
+feat(auth): implement Google sign in
 
 feat(cash-flow): add transaction form
 
 feat(crowdfunding): create campaign API
 
-fix(auth): handle expired JWT token
+fix(auth): validate Clerk JWT
 
 refactor(legalitas): simplify validation logic
 
@@ -330,7 +357,7 @@ Jenis commit yang digunakan:
 | `docs` | Perubahan dokumentasi |
 | `style` | Perubahan formatting tanpa mengubah logika |
 | `test` | Menambah atau memperbarui pengujian |
-| `chore` | Konfigurasi, dependency, CI/CD, atau maintenance |
+| `chore` | Dependency, konfigurasi, tooling, atau CI/CD |
 
 ---
 
@@ -345,7 +372,7 @@ feat(cash-flow): add transaction form
 
 feat(cash-flow): implement monthly summary
 
-fix(auth): handle expired JWT token
+fix(auth): validate Clerk JWT
 ```
 
 **Kurang Baik**
@@ -361,8 +388,8 @@ feat: add login, dashboard, crowdfunding, navbar, fix bugs, update README
 Sebelum membuat Pull Request ke branch `dev`, pastikan:
 
 - Menggunakan branch sesuai aturan penamaan.
-- Menggunakan Conventional Commit.
-- Satu Pull Request hanya untuk satu fitur atau satu perbaikan.
+- Menggunakan Conventional Commits.
+- Satu Pull Request hanya berisi satu fitur atau satu perbaikan.
 - Tidak terdapat lint error.
 - Project dapat di-build tanpa error.
 - Seluruh perubahan telah diuji sebelum diajukan untuk review.
