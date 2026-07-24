@@ -38,13 +38,10 @@
 
 ## 📊 3. Skor Kelayakan Keuangan (`credit-score`) — [Priority: MUST]
 
-- [ ] **Frontend UI (`/skor`)**
-  - [ ] Tampilan Skor IPK (0.00 – 4.00) & Tier (A / B / C / D).
-  - [ ] Breakdown 3 Komponen Utama:
-    - 50% Kesehatan Arus Kas
-    - 30% Status Legalitas
-    - 20% Riwayat Platform
-  - [ ] Panel Rekomendasi Peningkatan Skor (Actionable tips untuk menaikkan skor).
+- [x] **Frontend UI (`/skor`)**
+  - [x] Tampilan Skor Arc Gauge (82 - TINGGI), Peringkat Industri Top 15%, & Probabilitas Gagal Bayar 1.2%.
+  - [x] Breakdown 3 Komponen Utama (Konsistensi Cash Flow 90%, Status Legalitas 100%, Riwayat Pinjaman 75%).
+  - [x] Panel Rekomendasi Peningkatan Skor (Interactive checklist +5, +2, +4 Poin & Lock Verifikasi).
 - [ ] **Backend NestJS (`credit-score` module)**
   - [ ] Rule-based / Weighted Scoring Engine otomatis berdasarkan data `cash-flow` + `legalitas` + `crowdfunding`.
 
