@@ -8,12 +8,7 @@ export default function DashboardHeader() {
           Halo, Warung Berkah
         </h1>
         <p className="text-sm text-[#556061] mt-1">
-          {new Date().toLocaleDateString("id-ID", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
+          Laporan perkembangan bisnismu hari ini, 24 Mei 2024.
         </p>
       </div>
       <button className="inline-flex items-center gap-2 bg-[#0A2328] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition">

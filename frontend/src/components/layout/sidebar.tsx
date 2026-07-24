@@ -64,26 +64,38 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      <div className="border-t border-gray-200 pt-4 space-y-1">
-        {bottomNav.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-full transition",
-                isActive
-                  ? "bg-modava-accent text-modava-primary-dark"
-                  : "text-gray-600 hover:text-black hover:bg-gray-100"
-              )}
-            >
-              <Icon className="w-4 h-4" />
-              {item.label}
-            </Link>
-          );
-        })}
+      <div className="space-y-4">
+        <div className="border-t border-gray-200 pt-4 space-y-1">
+          {bottomNav.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-full transition",
+                  isActive
+                    ? "bg-[#86E3CE] text-[#0A2328]"
+                    : "text-gray-600 hover:text-black hover:bg-gray-100"
+                )}
+              >
+                <Icon className="w-4 h-4" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Bantuan & Support Box */}
+        <div className="bg-[#EAE8E3] rounded-xl p-4 space-y-1">
+          <p className="text-xs font-semibold text-[#0A2328]">
+            Bantuan & Support
+          </p>
+          <p className="text-[11px] text-[#556061] leading-snug">
+            Butuh pendampingan bisnis? Hubungi agen kami.
+          </p>
+        </div>
       </div>
     </aside>
   );

@@ -5,37 +5,30 @@ export default function WidgetOmzet() {
   const pct = Math.round((omzetData.nominal / omzetData.target) * 100);
 
   return (
-    <div className="bg-white rounded-2xl p-5 space-y-3">
-      <p className="text-[12px] text-[#556061] font-medium">
+    <div className="bg-white rounded-2xl p-5 space-y-3 border border-gray-100/50 shadow-sm">
+      <p className="text-[13px] text-[#556061] font-medium">
         Omzet Bulan Berjalan
       </p>
-      <div className="flex items-baseline justify-between">
-        <span className="text-lg md:text-xl font-bold text-[#0A2328]">
-          Rp{formatRp(omzetData.nominal)}
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="text-xl md:text-2xl font-bold text-[#0A2328]">
+          Rp {omzetData.nominal.toLocaleString("id-ID")}
         </span>
-        <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
-          <TrendingUp className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#16A34A] bg-[#DCFCE7]/60 px-2.5 py-1 rounded-full">
+          <TrendingUp className="w-3.5 h-3.5" />
           +{omzetData.growth}% vs bln lalu
         </span>
       </div>
-      <div className="space-y-1.5">
-        <div className="h-[6px] bg-gray-100 rounded-full overflow-hidden">
+      <div className="flex items-center gap-3 pt-2">
+        <span className="text-xs text-[#556061] whitespace-nowrap">
+          Target: Rp 30jt
+        </span>
+        <div className="flex-1 h-[6px] bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full bg-[#16A34A]"
+            className="h-full rounded-full bg-[#13634E]"
             style={{ width: `${pct}%` }}
           />
-        </div>
-        <div className="flex justify-between text-[11px] text-[#556061]">
-          <span>{pct}%</span>
-          <span>Target: Rp{formatRp(omzetData.target)}</span>
         </div>
       </div>
     </div>
   );
-}
-
-function formatRp(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(0)}jt`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}rb`;
-  return n.toString();
 }

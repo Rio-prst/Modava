@@ -1,43 +1,41 @@
-import { Clock } from "lucide-react";
 import Image from "next/image";
 import { campaignActive } from "./dashboard-data";
 
 export default function CampaignCard() {
-  const pct = Math.round(
-    (campaignActive.raised / campaignActive.target) * 100
-  );
+  const pct = campaignActive.percentage;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-md">
-      <div className="relative h-[150px]">
+    <div className="bg-white rounded-2xl border border-gray-100/60 overflow-hidden transition-all duration-300 hover:shadow-md flex flex-col justify-between">
+      <div className="relative h-[160px] w-full">
         <Image
           src={campaignActive.image}
           alt={campaignActive.title}
           fill
           className="object-cover"
         />
-        <span className="absolute top-3 right-3 bg-white/90 backdrop-blur text-[10px] font-bold uppercase rounded-md px-2.5 py-1 text-[#0A2328]">
+        <span className="absolute top-3 right-3 bg-[#FFF5D6] text-[#0A2328] text-[11px] font-bold rounded-lg px-3 py-1 shadow-sm">
           Crowdfunding
         </span>
       </div>
 
-      <div className="p-4 space-y-3">
-        <h3 className="text-[15px] font-bold text-[#0A2328]">
-          {campaignActive.title}
-        </h3>
-        <p className="text-[12px] text-[#556061] leading-relaxed line-clamp-2">
-          Mengembangkan usaha kuliner rumahan dengan inovasi menu sehat dan
-          kemasan kekinian.
-        </p>
+      <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="text-[16px] font-bold text-[#0A2328] leading-snug">
+            {campaignActive.title}
+          </h3>
+          <p className="text-[12px] text-[#556061] leading-relaxed mt-1.5">
+            {campaignActive.description}
+          </p>
+        </div>
 
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[12px]">
-            <span className="font-bold text-[#0A2328]">
-              Terkumpul: Rp{formatRp(campaignActive.raised)}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[13px]">
+            <span className="font-semibold text-[#0A2328]">
+              Terkumpul: <span className="font-bold">Rp {campaignActive.raised.toLocaleString("id-ID")}</span>
             </span>
-            <span className="font-bold text-[#EAB308]">{pct}%</span>
+            <span className="font-bold text-[#0A2328]">{pct}%</span>
           </div>
-          <div className="h-[6px] bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-[7px] bg-gray-100 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full bg-[#EAB308]"
               style={{ width: `${pct}%` }}
@@ -45,22 +43,16 @@ export default function CampaignCard() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1 text-[11px] text-red-500 font-semibold">
-            <Clock className="w-3.5 h-3.5" />
-            {campaignActive.daysLeft} Hari Lagi
-          </span>
-          <button className="bg-[#EAB308] text-[#0A2328] text-[11px] font-semibold rounded-lg px-4 py-1.5 hover:opacity-90 transition">
+        <div className="flex items-center justify-between pt-1">
+          <div className="text-[12px] text-[#0A2328]">
+            <span className="text-[#556061]">Sisa Waktu </span>
+            <span className="font-bold block sm:inline">{campaignActive.daysLeft} Hari Lagi</span>
+          </div>
+          <button className="bg-[#C68A16] hover:bg-[#B37B12] text-white text-[12px] font-semibold rounded-xl px-5 py-2.5 transition shadow-sm">
             Kelola Campaign
           </button>
         </div>
       </div>
     </div>
   );
-}
-
-function formatRp(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}jt`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}rb`;
-  return n.toString();
 }
