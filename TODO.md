@@ -23,11 +23,11 @@
 
 ## 💰 2. Cash Flow Tracker (`cash-flow`) — [Priority: MUST]
 
-- [ ] **Frontend UI (`/cash-flow`)**
-  - [ ] Form Input Transaksi (Tanggal, Tipe: Masuk/Keluar, Kategori, Nominal, Catatan).
-  - [ ] Tabel Riwayat Transaksi dengan filter bulan & pencarian.
-  - [ ] Card Summary: Total Pemasukan, Total Pengeluaran, Laba/Rugi Bersih.
-  - [ ] Chart Arus Kas Bulanan (Visibilitas tren 3-6 bulan).
+- [x] **Frontend UI (`/cash-flow`)**
+  - [x] Form Input Transaksi (Tanggal, Tipe: Masuk/Keluar, Kategori, Nominal, Catatan).
+  - [x] Tabel Riwayat Transaksi dengan filter bulan & pencarian.
+  - [x] Card Summary: Total Pemasukan, Total Pengeluaran, Laba/Rugi Bersih.
+  - [x] Indikator Syarat Minimum Campaign PRD [F14] (Pencatatan > 1 Bulan).
 - [ ] **Backend NestJS (`cash-flow` module)**
   - [ ] CRUD API untuk data transaksi arus kas.
   - [ ] Endpoint Agregasi Bulanan & Laba/Rugi.
