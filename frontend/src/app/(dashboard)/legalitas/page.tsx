@@ -1,10 +1,11 @@
+import { Metadata } from "next";
+import { LegalitasHub } from "@/components/legalitas/legalitas-hub";
+
+export const metadata: Metadata = {
+  title: "Legalitas Usaha & Administrasi | Modava",
+  description: "Cek verifikasi dokumen legalitas, kalkulator PPh final 0.5%, panduan perizinan, dan generator SKU PDF.",
+};
+
 export default function LegalitasPage() {
-  return (
-    <>
-      <h1 className="text-2xl font-bold text-modava-text-dark">Legalitas</h1>
-      <p className="text-sm text-modava-text-muted mt-2">
-        Urus legalitas usaha Anda (NIB, NPWP, Sertifikat Halal, dll).
-      </p>
-    </>
-  );
+  return <LegalitasHub />;
 }

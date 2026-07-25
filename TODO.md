@@ -49,10 +49,10 @@
 
 ## 🧮 4. Simulasi Pinjaman Mikro & Integrasi Campaign (`loan-simulation`) — [Priority: MUST]
 
-- [ ] **Frontend UI (`/pinjaman`)**
-  - [ ] Form Kalkulator Simulasi Pinjaman (Nominal Kebutuhan, Tenor Bulan, Estimasi Bunga/Cicilan).
-  - [ ] Indikator Kemampuan Bayar / DSCR (Debt Service Coverage Ratio) berdasarkan laba bersih bulanan dari Cash Flow.
-  - [ ] **CTA Integrasi Langsung [F6]**: Button *"Ajukan Modal dari Hasil Simulasi Ini"* yang otomatis membuka form pembuatan campaign dengan nominal & tenor pre-filled.
+- [x] **Frontend UI (`/pinjaman`)**
+  - [x] Form Kalkulator Simulasi Pinjaman (Nominal Kebutuhan, Tenor Bulan, Estimasi Bunga/Cicilan).
+  - [x] Indikator Kemampuan Bayar / DSCR (Debt Service Coverage Ratio) berdasarkan laba bersih bulanan dari Cash Flow.
+  - [x] **CTA Integrasi Langsung [F6]**: Button *"Ajukan Modal dari Hasil Simulasi Ini"* yang otomatis membuka form pembuatan campaign dengan nominal & tenor pre-filled.
 - [ ] **Backend NestJS (`loan-simulation` module)**
   - [ ] Formula kalkulasi cicilan & rasio kelayakan pinjaman.
 
@@ -60,9 +60,9 @@
 
 ## 🤝 5. Crowdfunding & Detail Campaign (`crowdfunding`) — [Priority: MUST]
 
-- [ ] **Frontend UI (`/crowdfunding`)**
-  - [ ] Form / Modal Pembuatan Campaign Baru (auto-fill dari Simulasi, validasi syarat minimum cash flow).
-  - [ ] **Halaman Detail Campaign (`/crowdfunding/[id]`)**:
+- [x] **Frontend UI (`/crowdfunding`)**
+  - [x] Form / Modal Pembuatan Campaign Baru (auto-fill dari Simulasi, validasi syarat minimum cash flow).
+  - [x] **Halaman Detail Campaign (`/crowdfunding/[id]`)**:
     - Header & Galeri Foto Campaign
     - Detail Profil UMKM & Skor Kelayakan (dengan breakdown)
     - Progress Bar Dana Terkumpul & Sisa Waktu
@@ -77,14 +77,14 @@
 
 ## 📜 6. Legalitas & Administrasi (`legalitas`) — [Priority: SHOULD / MUST]
 
-- [ ] **Frontend UI (`/legalitas`)**
-  - [ ] Upload Dokumen Legalitas (NIB, NPWP, Sertifikat Halal, Izin PIRT, TDP) ke Supabase Storage.
-  - [ ] Dashboard Progress Pengurusan Legalitas.
-  - [ ] Panduan Perizinan per jenis dokumen.
-  - [ ] **Kalkulator Pajak UMKM [F10]**: Hitung otomatis PPh Final tarif 0.5%.
-  - [ ] **Generator Template Surat PDF [F11]**: Form & download PDF surat administratif usaha via `pdf-lib`.
-- [ ] **Panel Admin Verifikasi [F15]**
-  - [ ] Halaman Admin (`/admin/legalitas`): Peninjauan dokumen yang diunggah UMKM & approval (Ubah status dokumen ke "Terverifikasi").
+- [x] **Frontend UI (`/legalitas`)**
+  - [x] Upload Dokumen Legalitas (NIB, NPWP, Sertifikat Halal, Izin PIRT, TDP) ke Supabase Storage.
+  - [x] Dashboard Progress Pengurusan Legalitas.
+  - [x] Panduan Perizinan per jenis dokumen.
+  - [x] **Kalkulator Pajak UMKM [F10]**: Hitung otomatis PPh Final tarif 0.5%.
+  - [x] **Generator Template Surat PDF [F11]**: Form & download PDF surat administratif usaha via `pdf-lib`.
+- [x] **Panel Admin Verifikasi [F15]**
+  - [x] Halaman Admin (`/admin/legalitas`): Peninjauan dokumen yang diunggah UMKM & approval (Ubah status dokumen ke "Terverifikasi").
 - [ ] **Backend NestJS (`legalitas` module)**
   - [ ] API Upload & status tracking dokumen legalitas.
   - [ ] API Admin Verification Endpoint.
@@ -93,10 +93,10 @@
 
 ## 👤 7. Profil UMKM & Notifikasi (`umkm-profile`, `notification`) — [Priority: MUST]
 
-- [ ] **Frontend UI (`/profil`)**
-  - [ ] Form Edit Profil UMKM (Nama usaha, kategori, deskripsi, alamat, kontak, logo).
-- [ ] **Frontend UI (`/notifikasi`)**
-  - [ ] List Notifikasi In-App (Pledge baru masuk, Target campaign tercapai, Dokumen legalitas diverifikasi).
+- [x] **Frontend UI (`/profil`)**
+  - [x] Form Edit Profil UMKM (Nama usaha, kategori, deskripsi, alamat, kontak, logo).
+- [x] **Frontend UI (`/notifikasi`)**
+  - [x] List Notifikasi In-App (Pledge baru masuk, Target campaign tercapai, Dokumen legalitas diverifikasi).
 - [ ] **Backend NestJS (`umkm-profile` & `notification` modules)**
   - [ ] API Profil UMKM & Management Notifikasi.
 
