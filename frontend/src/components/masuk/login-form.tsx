@@ -1,29 +1,86 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Eye, EyeOff } from "lucide-react";
+import { Mail, Eye, EyeOff, ArrowRight, Store, HeartHandshake, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import InputField from "./input-field";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("sri.rahayu@warungberkah.com");
+  const [password, setPassword] = useState("password123");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => {
+      document.cookie = "modava_session=demo_active_user; path=/";
+      router.push("/dashboard");
+    }, 600);
+  };
+
+  const handleQuickLogin = (role: "umkm" | "kontributor") => {
+    setIsLoading(true);
+    setTimeout(() => {
+      document.cookie = `modava_session=${role}_active_user; path=/`;
+      if (role === "kontributor") {
+        router.push("/kontributor");
+      } else {
+        router.push("/dashboard");
+      }
+    }, 400);
+  };
 
   return (
-    <div className="w-full max-w-[420px] mx-auto px-5 md:px-0">
-      <div className="md:hidden mb-8">
+    <div className="w-full max-w-[420px] mx-auto px-5 md:px-0 space-y-6">
+      <div className="md:hidden mb-4">
         <Link href="/" className="text-[22px] font-bold text-[#0A2328]">
           Modava
         </Link>
       </div>
 
-      <h1 className="text-[28px] font-bold text-[#0A2328]">
-        Selamat Datang Kembali
-      </h1>
-      <p className="text-sm text-[#556061] mt-2 mb-6">
-        Masuk ke akun Modava Anda untuk melanjutkan.
-      </p>
+      <div>
+        <h1 className="text-[28px] font-bold text-[#0A2328]">
+          Selamat Datang Kembali
+        </h1>
+        <p className="text-sm text-[#556061] mt-1">
+          Masuk ke akun Modava Anda untuk melanjutkan.
+        </p>
+      </div>
 
-      <button className="w-full h-[44px] flex items-center justify-center gap-3 rounded-lg border border-[#D1D5DB] bg-white text-sm font-medium text-[#0A2328] hover:bg-gray-50 transition">
+      {/* Quick Demo Login Preset Buttons for easy testing */}
+      <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl space-y-2.5">
+        <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
+          <Sparkles className="w-4 h-4 text-emerald-600" />
+          <span>Uji Coba Pengujian (1-Click Login):</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => handleQuickLogin("umkm")}
+            className="py-2.5 px-3 bg-modava-primary text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+          >
+            <Store className="w-3.5 h-3.5" /> Login Demo UMKM
+          </button>
+          <button
+            type="button"
+            onClick={() => handleQuickLogin("kontributor")}
+            className="py-2.5 px-3 bg-amber-500 text-modava-text-dark rounded-xl text-xs font-bold hover:bg-amber-400 transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+          >
+            <HeartHandshake className="w-3.5 h-3.5" /> Login Kontributor
+          </button>
+        </div>
+      </div>
+
+      {/* Google Login Option */}
+      <button
+        type="button"
+        onClick={() => handleQuickLogin("umkm")}
+        className="w-full h-[46px] flex items-center justify-center gap-3 rounded-xl border border-[#D1D5DB] bg-white text-sm font-medium text-[#0A2328] hover:bg-gray-50 transition shadow-xs"
+      >
         <svg width="18" height="18" viewBox="0 0 24 24">
           <path
             fill="#4285F4"
@@ -45,7 +102,7 @@ export default function LoginForm() {
         Masuk dengan Google
       </button>
 
-      <div className="flex items-center gap-3 my-5">
+      <div className="flex items-center gap-3 my-4">
         <div className="flex-1 h-px bg-[#E5E7EB]" />
         <span className="text-[11px] text-[#556061] whitespace-nowrap">
           Atau gunakan email
@@ -53,28 +110,26 @@ export default function LoginForm() {
         <div className="flex-1 h-px bg-[#E5E7EB]" />
       </div>
 
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className="space-y-5"
-      >
+      <form onSubmit={handleLogin} className="space-y-4">
         <InputField
           label="Email Bisnis"
           type="email"
           placeholder="nama@ukmanda.com"
           icon={Mail}
+          value={email}
+          onChange={(e: any) => setEmail(e.target.value)}
         />
 
         <InputField
           label="Kata Sandi"
           type={showPassword ? "text" : "password"}
           placeholder="Masukkan kata sandi"
+          value={password}
+          onChange={(e: any) => setPassword(e.target.value)}
           rightLabel={
-            <Link
-              href="/lupa-password"
-              className="text-[12px] font-semibold text-[#0A2328] hover:underline"
-            >
+            <span className="text-[12px] font-semibold text-[#0A2328] hover:underline cursor-pointer">
               Lupa password?
-            </Link>
+            </span>
           }
           trailing={
             <button
@@ -91,9 +146,10 @@ export default function LoginForm() {
           }
         />
 
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label className="flex items-center gap-2 cursor-pointer pt-1">
           <input
             type="checkbox"
+            defaultChecked
             className="w-4 h-4 rounded border-gray-300 text-[#0A2328] accent-[#0A2328]"
           />
           <span className="text-[13px] text-[#0A2328]">
@@ -103,13 +159,21 @@ export default function LoginForm() {
 
         <button
           type="submit"
-          className="w-full h-12 rounded-lg bg-[#052530] text-white text-sm font-medium hover:opacity-90 transition"
+          disabled={isLoading}
+          className="w-full h-12 rounded-xl bg-modava-primary text-white text-sm font-bold hover:bg-emerald-800 transition shadow-md flex items-center justify-center gap-2"
         >
-          Masuk ke Dashboard
+          {isLoading ? (
+            <span>Memproses masuk...</span>
+          ) : (
+            <>
+              <span>Masuk ke Dashboard</span>
+              <ArrowRight className="w-4 h-4" />
+            </>
+          )}
         </button>
       </form>
 
-      <p className="text-center text-sm text-[#556061] mt-8">
+      <p className="text-center text-sm text-[#556061] pt-2">
         Belum memiliki akun Modava?{" "}
         <Link
           href="/daftar"
