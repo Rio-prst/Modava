@@ -6,6 +6,10 @@ import { UsersModule } from './modules/users/users.module.js';
 import { UmkmProfileModule } from './modules/umkm-profile/umkm-profile.module.js';
 import { CashFlowModule } from './modules/cash-flow/cash-flow.module.js';
 import { CampaignModule } from './modules/campaign/campaign.module.js';
+import { PledgeModule } from './modules/pledge/pledge.module.js';
+import { LoanSimulationModule } from './modules/loan-simulation/loan-simulation.module.js';
+import { FundUsageReportModule } from './modules/fund-usage-report/fund-usage-report.module.js';
+import { LegalitasModule } from './modules/legalitas/legalitas.module.js';
 
 @Module({
   imports: [
@@ -14,6 +18,10 @@ import { CampaignModule } from './modules/campaign/campaign.module.js';
     UmkmProfileModule,
     CashFlowModule,
     CampaignModule,
+    PledgeModule,
+    LoanSimulationModule,
+    FundUsageReportModule,
+    LegalitasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
