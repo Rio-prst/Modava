@@ -13,6 +13,7 @@ export interface IPledgeService {
     clerkUserId: string,
     data: CreatePledgeDtoInput,
   ): Promise<PledgeResponse>;
+  cancel(clerkUserId: string, id: string): Promise<void>;
   findAllByCampaign(campaignId: string): Promise<PledgeResponse[]>;
   findAllMy(clerkUserId: string): Promise<PledgeResponse[]>;
 }

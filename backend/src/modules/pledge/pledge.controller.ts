@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Body,
   Param,
   Req,
@@ -24,6 +25,12 @@ export class PledgeController {
   async create(@Req() req: AuthenticatedRequest, @Body() dto: CreatePledgeDto) {
     const pledge = await this.pledgeService.create(req.user.clerkUserId, dto);
     return { data: pledge };
+  }
+
+  @Delete(':id')
+  async cancel(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
+    await this.pledgeService.cancel(req.user.clerkUserId, id);
+    return { data: null };
   }
 
   @Get('campaign/:campaignId')

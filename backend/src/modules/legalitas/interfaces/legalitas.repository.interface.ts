@@ -44,12 +44,25 @@ export interface LocalUmkmProfile {
   id: string;
 }
 
+export interface LocalUmkmProfileWithUser {
+  id: string;
+  userId: string;
+}
+
+export interface LocalUser {
+  id: string;
+}
+
 export const ILegalitasRepository = Symbol('ILegalitasRepository');
 
 export interface ILegalitasRepository {
   findUmkmProfileByClerkUserId(
     clerkUserId: string,
   ): Promise<LocalUmkmProfile | null>;
+  findUmkmProfileWithUserId(
+    umkmProfileId: string,
+  ): Promise<LocalUmkmProfileWithUser | null>;
+  findUserByClerkUserId(clerkUserId: string): Promise<LocalUser | null>;
   findGuideByDocumentType(
     documentType: DocumentType,
   ): Promise<GuideResponse | null>;
@@ -62,6 +75,7 @@ export interface ILegalitasRepository {
   findAllDocumentsByUmkmProfileId(
     umkmProfileId: string,
   ): Promise<DocumentResponse[]>;
+  findAllDocuments(): Promise<DocumentResponse[]>;
   createDocument(data: CreateDocumentInput): Promise<DocumentResponse>;
   updateDocumentStatus(
     id: string,

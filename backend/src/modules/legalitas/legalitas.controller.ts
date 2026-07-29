@@ -2,18 +2,35 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   Req,
+  Res,
   UseGuards,
   Inject,
   NotFoundException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ClerkAuthGuard } from '../../common/guards/clerk-auth.guard.js';
+import { AdminGuard } from '../../common/guards/admin.guard.js';
 import type { AuthenticatedRequest } from '../../common/types/api-response.js';
 import type { DocumentType } from './interfaces/legalitas.repository.interface.js';
 import { ILegalitasService } from './interfaces/legalitas.service.interface.js';
-import { CreateDocumentDto } from './dto/create-document.dto.js';
+import type { UploadFileInfo } from './interfaces/legalitas.service.interface.js';
+import { UploadDocumentDto } from './dto/upload-document.dto.js';
+import { VerifyDocumentDto } from './dto/verify-document.dto.js';
+import { CalculateTaxDto } from './dto/calculate-tax.dto.js';
+import { GenerateLetterDto } from './dto/generate-letter.dto.js';
+import type { Response } from 'express';
+
+interface MulterFile {
+  buffer: Buffer;
+  originalname: string;
+  mimetype: string;
+}
 
 function isDocumentType(value: string): value is DocumentType {
   return (
@@ -60,13 +77,75 @@ export class LegalitasController {
 
   @Post('documents')
   @UseGuards(ClerkAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
   async uploadDocument(
     @Req() req: AuthenticatedRequest,
-    @Body() dto: CreateDocumentDto,
+    @UploadedFile() file: MulterFile,
+    @Body() dto: UploadDocumentDto,
   ) {
-    const document = await this.legalitasService.uploadDocument(
+    if (!file) {
+      throw new NotFoundException('File is required.');
+    }
+
+    const fileInfo: UploadFileInfo = {
+      buffer: file.buffer,
+      originalName: file.originalname,
+      mimeType: file.mimetype,
+    };
+
+    const document = await this.legalitasService.uploadDocumentFile(
       req.user.clerkUserId,
-      dto,
+      fileInfo,
+      dto.documentType,
+    );
+    return { data: document };
+  }
+
+  @Get('admin/documents')
+  @UseGuards(ClerkAuthGuard, AdminGuard)
+  async adminGetAllDocuments() {
+    const documents = await this.legalitasService.getAllDocuments();
+    return { data: documents };
+  }
+
+  @Post('template-surat')
+  @UseGuards(ClerkAuthGuard)
+  async generateLetter(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: GenerateLetterDto,
+    @Res() res: Response,
+  ) {
+    const result = await this.legalitasService.generateLetter(
+      req.user.clerkUserId,
+      dto.letterType,
+    );
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${result.fileName}"`,
+    );
+    res.end(result.buffer);
+  }
+
+  @Post('tax-calculator')
+  calculateTax(@Body() dto: CalculateTaxDto) {
+    const result = this.legalitasService.calculateTax(dto.omzet);
+    return { data: result };
+  }
+
+  @Patch('admin/documents/:id/verify')
+  @UseGuards(ClerkAuthGuard, AdminGuard)
+  async verifyDocument(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') id: string,
+    @Body() dto: VerifyDocumentDto,
+  ) {
+    const document = await this.legalitasService.verifyDocument(
+      req.user.clerkUserId,
+      id,
+      dto.status,
+      dto.notes,
     );
     return { data: document };
   }

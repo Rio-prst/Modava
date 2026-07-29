@@ -1,3 +1,11 @@
+export interface UpdateCashFlowInput {
+  type?: 'INCOME' | 'EXPENSE';
+  amount?: number;
+  description?: string;
+  category?: string;
+  transactionDate?: string;
+}
+
 export interface CreateCashFlowInput {
   type: 'INCOME' | 'EXPENSE';
   amount: number;
@@ -52,9 +60,16 @@ export interface ICashFlowRepository {
     umkmProfileId: string,
     filter: CashFlowFilter,
   ): Promise<CashFlowTransactionResponse[]>;
+  findTransactionById(id: string): Promise<CashFlowTransactionResponse | null>;
+  update(
+    id: string,
+    data: UpdateCashFlowInput,
+  ): Promise<CashFlowTransactionResponse>;
+  delete(id: string): Promise<void>;
   getSummary(
     umkmProfileId: string,
     month: number,
     year: number,
   ): Promise<MonthlySummary>;
+  recalculateAllSummaries(umkmProfileId: string): Promise<void>;
 }

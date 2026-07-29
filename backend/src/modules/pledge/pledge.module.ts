@@ -4,8 +4,10 @@ import { PledgeService } from './pledge.service.js';
 import { PledgeRepository } from './pledge.repository.js';
 import { IPledgeRepository } from './interfaces/pledge.repository.interface.js';
 import { IPledgeService } from './interfaces/pledge.service.interface.js';
+import { NotificationModule } from '../notification/notification.module.js';
 
 @Module({
+  imports: [NotificationModule],
   controllers: [PledgeController],
   providers: [
     { provide: IPledgeService, useClass: PledgeService },

@@ -1,0 +1,1 @@
+export const MIN_CASHFLOW_SUMMARIES = 1;

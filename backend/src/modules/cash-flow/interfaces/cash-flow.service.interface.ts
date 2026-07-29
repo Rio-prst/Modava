@@ -1,5 +1,6 @@
 import type {
   CreateCashFlowInput,
+  UpdateCashFlowInput,
   CashFlowFilter,
   CashFlowTransactionResponse,
   MonthlySummary,
@@ -16,9 +17,16 @@ export interface ICashFlowService {
     clerkUserId: string,
     filter: CashFlowFilter,
   ): Promise<CashFlowTransactionResponse[]>;
+  update(
+    clerkUserId: string,
+    id: string,
+    data: UpdateCashFlowInput,
+  ): Promise<CashFlowTransactionResponse>;
+  delete(clerkUserId: string, id: string): Promise<void>;
   getSummary(
     clerkUserId: string,
     month: number,
     year: number,
   ): Promise<MonthlySummary>;
+  recalculateAllSummaries(clerkUserId: string): Promise<void>;
 }

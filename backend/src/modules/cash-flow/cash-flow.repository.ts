@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service.js';
 import type {
   CashFlowTransactionResponse,
   CreateCashFlowInput,
+  UpdateCashFlowInput,
   CashFlowFilter,
   ICashFlowRepository,
 } from './interfaces/cash-flow.repository.interface.js';
@@ -33,6 +34,13 @@ export class CashFlowRepository implements ICashFlowRepository {
       },
     });
 
+    const d = result.transactionDate;
+    await this.upsertMonthlySummary(
+      umkmProfileId,
+      d.getMonth() + 1,
+      d.getFullYear(),
+    );
+
     return { ...result, amount: result.amount.toNumber() };
   }
 
@@ -60,6 +68,73 @@ export class CashFlowRepository implements ICashFlowRepository {
     });
 
     return results.map((r) => ({ ...r, amount: r.amount.toNumber() }));
+  }
+
+  async findTransactionById(
+    id: string,
+  ): Promise<CashFlowTransactionResponse | null> {
+    const result = await this.prisma.cashFlowTransaction.findUnique({
+      where: { id },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return { ...result, amount: result.amount.toNumber() };
+  }
+
+  async update(
+    id: string,
+    data: UpdateCashFlowInput,
+  ): Promise<CashFlowTransactionResponse> {
+    const old = await this.prisma.cashFlowTransaction.findUnique({
+      where: { id },
+      select: { transactionDate: true, umkmProfileId: true },
+    });
+
+    const result = await this.prisma.cashFlowTransaction.update({
+      where: { id },
+      data: {
+        ...data,
+        transactionDate: data.transactionDate
+          ? new Date(data.transactionDate)
+          : undefined,
+      },
+    });
+
+    if (old) {
+      await this.upsertMonthlySummary(
+        old.umkmProfileId,
+        old.transactionDate.getMonth() + 1,
+        old.transactionDate.getFullYear(),
+      );
+    }
+
+    await this.upsertMonthlySummary(
+      result.umkmProfileId,
+      result.transactionDate.getMonth() + 1,
+      result.transactionDate.getFullYear(),
+    );
+
+    return { ...result, amount: result.amount.toNumber() };
+  }
+
+  async delete(id: string): Promise<void> {
+    const old = await this.prisma.cashFlowTransaction.findUnique({
+      where: { id },
+      select: { transactionDate: true, umkmProfileId: true },
+    });
+
+    await this.prisma.cashFlowTransaction.delete({ where: { id } });
+
+    if (old) {
+      await this.upsertMonthlySummary(
+        old.umkmProfileId,
+        old.transactionDate.getMonth() + 1,
+        old.transactionDate.getFullYear(),
+      );
+    }
   }
 
   async getSummary(umkmProfileId: string, month: number, year: number) {
@@ -93,5 +168,75 @@ export class CashFlowRepository implements ICashFlowRepository {
       netProfit: totalIncome - totalExpense,
       transactionCount: transactions.length,
     };
+  }
+
+  private async upsertMonthlySummary(
+    umkmProfileId: string,
+    month: number,
+    year: number,
+  ) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+
+    const transactions = await this.prisma.cashFlowTransaction.findMany({
+      where: {
+        umkmProfileId,
+        transactionDate: { gte: startDate, lte: endDate },
+      },
+    });
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    for (const tx of transactions) {
+      const amount = tx.amount.toNumber();
+      if (tx.type === 'INCOME') {
+        totalIncome += amount;
+      } else {
+        totalExpense += amount;
+      }
+    }
+
+    await this.prisma.cashFlowMonthlySummary.upsert({
+      where: {
+        umkmProfileId_month_year: { umkmProfileId, month, year },
+      },
+      create: {
+        umkmProfileId,
+        month,
+        year,
+        totalIncome,
+        totalExpense,
+        netProfit: totalIncome - totalExpense,
+        transactionCount: transactions.length,
+      },
+      update: {
+        totalIncome,
+        totalExpense,
+        netProfit: totalIncome - totalExpense,
+        transactionCount: transactions.length,
+      },
+    });
+  }
+
+  async recalculateAllSummaries(umkmProfileId: string) {
+    const transactions = await this.prisma.cashFlowTransaction.findMany({
+      where: { umkmProfileId },
+      select: { transactionDate: true },
+      orderBy: { transactionDate: 'asc' },
+    });
+
+    const seen = new Set<string>();
+    for (const tx of transactions) {
+      const key = `${tx.transactionDate.getFullYear()}-${tx.transactionDate.getMonth() + 1}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        await this.upsertMonthlySummary(
+          umkmProfileId,
+          tx.transactionDate.getMonth() + 1,
+          tx.transactionDate.getFullYear(),
+        );
+      }
+    }
   }
 }

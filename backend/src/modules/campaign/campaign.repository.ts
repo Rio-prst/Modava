@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import type {
+  CampaignMediaResponse,
   CampaignResponse,
   CreateCampaignInput,
+  CreateCampaignMediaInput,
   UpdateCampaignInput,
+  ExpiredCampaignResult,
   ICampaignRepository,
 } from './interfaces/campaign.repository.interface.js';
 
@@ -90,6 +93,28 @@ export class CampaignRepository implements ICampaignRepository {
     };
   }
 
+  async findExpiredActiveCampaigns(
+    now: Date,
+  ): Promise<ExpiredCampaignResult[]> {
+    const results = await this.prisma.campaign.findMany({
+      where: {
+        status: 'ACTIVE',
+        endDate: { lte: now },
+      },
+      select: {
+        id: true,
+        title: true,
+        umkmProfile: { select: { userId: true } },
+      },
+    });
+
+    return results.map((r) => ({
+      id: r.id,
+      title: r.title,
+      ownerUserId: r.umkmProfile.userId,
+    }));
+  }
+
   async updateStatus(
     id: string,
     status: 'DRAFT' | 'ACTIVE' | 'FUNDED' | 'CLOSED',
@@ -104,5 +129,11 @@ export class CampaignRepository implements ICampaignRepository {
       fundingGoal: result.fundingGoal.toNumber(),
       amountRaised: result.amountRaised.toNumber(),
     };
+  }
+
+  async createMedia(
+    data: CreateCampaignMediaInput,
+  ): Promise<CampaignMediaResponse> {
+    return this.prisma.campaignMedia.create({ data });
   }
 }

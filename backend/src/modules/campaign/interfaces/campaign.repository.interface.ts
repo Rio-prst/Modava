@@ -36,6 +36,28 @@ export interface LocalUmkmProfile {
   userId: string;
 }
 
+export interface ExpiredCampaignResult {
+  id: string;
+  title: string;
+  ownerUserId: string;
+}
+
+export interface CreateCampaignMediaInput {
+  campaignId: string;
+  fileUrl: string;
+  fileType: 'IMAGE' | 'DOCUMENT';
+  isPrimary: boolean;
+}
+
+export interface CampaignMediaResponse {
+  id: string;
+  campaignId: string;
+  fileUrl: string;
+  fileType: 'IMAGE' | 'DOCUMENT';
+  isPrimary: boolean;
+  createdAt: Date;
+}
+
 export const ICampaignRepository = Symbol('ICampaignRepository');
 
 export interface ICampaignRepository {
@@ -53,4 +75,6 @@ export interface ICampaignRepository {
     id: string,
     status: 'DRAFT' | 'ACTIVE' | 'FUNDED' | 'CLOSED',
   ): Promise<CampaignResponse>;
+  findExpiredActiveCampaigns(now: Date): Promise<ExpiredCampaignResult[]>;
+  createMedia(data: CreateCampaignMediaInput): Promise<CampaignMediaResponse>;
 }

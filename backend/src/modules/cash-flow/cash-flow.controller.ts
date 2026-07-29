@@ -2,8 +2,11 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
+  Delete,
   Query,
   Body,
+  Param,
   Req,
   UseGuards,
   ParseIntPipe,
@@ -13,6 +16,7 @@ import { ClerkAuthGuard } from '../../common/guards/clerk-auth.guard.js';
 import type { AuthenticatedRequest } from '../../common/types/api-response.js';
 import { ICashFlowService } from './interfaces/cash-flow.service.interface.js';
 import { CreateCashFlowDto } from './dto/create-cash-flow.dto.js';
+import { UpdateCashFlowDto } from './dto/update-cash-flow.dto.js';
 
 @Controller('cash-flow')
 @UseGuards(ClerkAuthGuard)
@@ -56,6 +60,29 @@ export class CashFlowController {
     return { data: transactions };
   }
 
+  @Patch('transactions/:id')
+  async updateTransaction(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') id: string,
+    @Body() dto: UpdateCashFlowDto,
+  ) {
+    const transaction = await this.cashFlowService.update(
+      req.user.clerkUserId,
+      id,
+      dto,
+    );
+    return { data: transaction };
+  }
+
+  @Delete('transactions/:id')
+  async deleteTransaction(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
+    await this.cashFlowService.delete(req.user.clerkUserId, id);
+    return { data: null };
+  }
+
   @Get('summary')
   async getSummary(
     @Req() req: AuthenticatedRequest,
@@ -69,5 +96,11 @@ export class CashFlowController {
     );
 
     return { data: summary };
+  }
+
+  @Post('recalculate')
+  async recalculateSummaries(@Req() req: AuthenticatedRequest) {
+    await this.cashFlowService.recalculateAllSummaries(req.user.clerkUserId);
+    return { data: { message: 'Summaries recalculated.' } };
   }
 }

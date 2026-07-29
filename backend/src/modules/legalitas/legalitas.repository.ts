@@ -18,6 +18,20 @@ export class LegalitasRepository implements ILegalitasRepository {
     });
   }
 
+  findUmkmProfileWithUserId(umkmProfileId: string) {
+    return this.prisma.uMKMProfile.findUnique({
+      where: { id: umkmProfileId },
+      select: { id: true, userId: true },
+    });
+  }
+
+  findUserByClerkUserId(clerkUserId: string) {
+    return this.prisma.user.findUnique({
+      where: { clerkUserId },
+      select: { id: true },
+    });
+  }
+
   findAllGuides() {
     return this.prisma.legalitasGuide.findMany({
       orderBy: { order: 'asc' },
@@ -45,6 +59,12 @@ export class LegalitasRepository implements ILegalitasRepository {
   findAllDocumentsByUmkmProfileId(umkmProfileId: string) {
     return this.prisma.legalitasDocument.findMany({
       where: { umkmProfileId },
+      orderBy: { submittedAt: 'desc' },
+    });
+  }
+
+  findAllDocuments() {
+    return this.prisma.legalitasDocument.findMany({
       orderBy: { submittedAt: 'desc' },
     });
   }
