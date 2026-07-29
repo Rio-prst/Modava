@@ -1,29 +1,43 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// Define protected dashboard routes requiring authentication
-const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
-  "/cash-flow(.*)",
-  "/skor(.*)",
-  "/crowdfunding/buat(.*)",
-  "/legalitas(.*)",
-  "/admin(.*)",
-  "/profil(.*)",
-  "/notifikasi(.*)",
-]);
+const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-export default clerkMiddleware((auth, req) => {
-  // Allow public access or protect specific routes if authentication keys are set
-  if (isProtectedRoute(req)) {
-    // auth().protect();
+export function middleware(request: NextRequest) {
+  // If Clerk Key is not provided in .env.local, pass through safely to prevent Missing publishableKey error
+  if (!clerkPublishableKey) {
+    return NextResponse.next();
   }
-});
+
+  // When NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is present, dynamically load clerkMiddleware
+  try {
+    const { clerkMiddleware, createRouteMatcher } = require("@clerk/nextjs/server");
+    const isProtectedRoute = createRouteMatcher([
+      "/dashboard(.*)",
+      "/cash-flow(.*)",
+      "/skor(.*)",
+      "/crowdfunding/buat(.*)",
+      "/legalitas(.*)",
+      "/admin(.*)",
+      "/profil(.*)",
+      "/notifikasi(.*)",
+    ]);
+
+    const handler = clerkMiddleware((auth: any, req: any) => {
+      if (isProtectedRoute(req)) {
+        // auth().protect();
+      }
+    });
+
+    return handler(request as any, {} as any);
+  } catch (e) {
+    return NextResponse.next();
+  }
+}
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
     "/(api|trpc)(.*)",
   ],
 };

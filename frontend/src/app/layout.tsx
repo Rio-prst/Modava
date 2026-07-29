@@ -14,24 +14,37 @@ export const metadata: Metadata = {
     "Solusi finansial terintegrasi untuk usaha mikro. Dari pencatatan keuangan otomatis hingga akses permodalan kolektif yang transparan.",
 };
 
+const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <ClerkProvider
-      appearance={{
-        variables: {
-          colorPrimary: "#1E6B52",
-        },
-      }}
-    >
-      <html lang="id" className={plusJakartaSans.variable}>
-        <body className="antialiased font-sans bg-modava-bg text-modava-text-dark">
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+  const bodyContent = (
+    <html lang="id" className={plusJakartaSans.variable}>
+      <body className="antialiased font-sans bg-modava-bg text-modava-text-dark">
+        {children}
+      </body>
+    </html>
   );
+
+  // If Clerk Publishable Key is provided in environment variables, wrap with ClerkProvider
+  if (clerkPublishableKey) {
+    return (
+      <ClerkProvider
+        publishableKey={clerkPublishableKey}
+        appearance={{
+          variables: {
+            colorPrimary: "#1E6B52",
+          },
+        }}
+      >
+        {bodyContent}
+      </ClerkProvider>
+    );
+  }
+
+  // Fallback: Render standard layout if Clerk key is not yet set in .env.local
+  return bodyContent;
 }

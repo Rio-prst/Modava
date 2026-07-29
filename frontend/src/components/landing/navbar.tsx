@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Menu, X, ArrowRight, Sparkles, UserCheck } from "lucide-react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
+const hasClerkKey = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -51,33 +53,52 @@ export default function Navbar() {
 
           {/* Right Action Buttons */}
           <div className="hidden md:flex items-center gap-4">
-            <SignedIn>
-              <div className="flex items-center gap-3">
+            {hasClerkKey ? (
+              <>
+                <SignedIn>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href="/dashboard"
+                      className="px-4 py-2 bg-emerald-50 text-modava-primary text-xs font-bold rounded-xl border border-emerald-200 hover:bg-emerald-100 transition-colors flex items-center gap-1.5"
+                    >
+                      <UserCheck className="w-4 h-4" /> Dashboard Usaha
+                    </Link>
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
+                </SignedIn>
+                <SignedOut>
+                  <Link
+                    href="/masuk"
+                    className="px-5 py-2.5 text-sm font-semibold text-modava-text-dark hover:text-modava-primary transition-colors"
+                  >
+                    Masuk
+                  </Link>
+                  <Link
+                    href="/daftar"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-modava-primary to-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md hover:from-emerald-700 hover:to-modava-primary transition-all group"
+                  >
+                    <Sparkles className="w-4 h-4 text-emerald-200 group-hover:rotate-12 transition-transform" />
+                    Daftar Sekarang
+                  </Link>
+                </SignedOut>
+              </>
+            ) : (
+              <>
                 <Link
-                  href="/dashboard"
-                  className="px-4 py-2 bg-emerald-50 text-modava-primary text-xs font-bold rounded-xl border border-emerald-200 hover:bg-emerald-100 transition-colors flex items-center gap-1.5"
+                  href="/masuk"
+                  className="px-5 py-2.5 text-sm font-semibold text-modava-text-dark hover:text-modava-primary transition-colors"
                 >
-                  <UserCheck className="w-4 h-4" /> Dashboard Usaha
+                  Masuk
                 </Link>
-                <UserButton afterSignOutUrl="/" />
-              </div>
-            </SignedIn>
-
-            <SignedOut>
-              <Link
-                href="/masuk"
-                className="px-5 py-2.5 text-sm font-semibold text-modava-text-dark hover:text-modava-primary transition-colors"
-              >
-                Masuk
-              </Link>
-              <Link
-                href="/daftar"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-modava-primary to-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md hover:from-emerald-700 hover:to-modava-primary transition-all group"
-              >
-                <Sparkles className="w-4 h-4 text-emerald-200 group-hover:rotate-12 transition-transform" />
-                Daftar Sekarang
-              </Link>
-            </SignedOut>
+                <Link
+                  href="/daftar"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-modava-primary to-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md hover:from-emerald-700 hover:to-modava-primary transition-all group"
+                >
+                  <Sparkles className="w-4 h-4 text-emerald-200 group-hover:rotate-12 transition-transform" />
+                  Daftar Sekarang
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Toggle Button */}
