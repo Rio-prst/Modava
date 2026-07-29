@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { HeartHandshake, ArrowLeft, CheckCircle2, ArrowRight, Heart, Sparkles } from "lucide-react";
+import { HeartHandshake, ArrowLeft, CheckCircle2, ArrowRight, Heart } from "lucide-react";
 
 export default function DaftarKontributorPage() {
   const [submitted, setSubmitted] = useState(false);
