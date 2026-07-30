@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { legalitasData } from "./dashboard-data";
 
 const statusStyles: Record<string, { bg: string; text: string }> = {
@@ -8,10 +10,19 @@ const statusStyles: Record<string, { bg: string; text: string }> = {
 
 export default function WidgetLegalitas() {
   return (
-    <div className="bg-white rounded-2xl p-5 space-y-3.5 border border-gray-100/50 shadow-sm">
-      <p className="text-[13px] text-[#556061] font-semibold">
-        Status Legalitas
-      </p>
+    <div className="bg-white rounded-2xl p-5 space-y-3.5 border border-gray-100/50 shadow-sm flex flex-col justify-between">
+      <div className="flex items-center justify-between">
+        <p className="text-[13px] text-[#0A2328] font-semibold">
+          Status Legalitas
+        </p>
+        <Link
+          href="/legalitas"
+          className="text-xs font-semibold text-[#13634E] hover:underline flex items-center gap-1"
+        >
+          <span>Kelola</span>
+          <ArrowRight className="w-3 h-3" />
+        </Link>
+      </div>
       <div className="space-y-3">
         {legalitasData.map((item) => {
           const style = statusStyles[item.status] || statusStyles["Belum Ada"];

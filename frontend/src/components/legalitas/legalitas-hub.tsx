@@ -395,7 +395,30 @@ export function LegalitasHub() {
             {/* Document PDF Preview Area */}
             {showPdfPreview && (
               <div className="p-8 bg-slate-100 rounded-3xl border border-slate-300 space-y-4">
-                <div className="flex justify-end gap-2">
+                <style>{`
+                  @media print {
+                    body * {
+                      visibility: hidden !important;
+                    }
+                    #pdf-sku-document, #pdf-sku-document * {
+                      visibility: visible !important;
+                    }
+                    #pdf-sku-document {
+                      position: fixed !important;
+                      left: 50% !important;
+                      top: 20px !important;
+                      transform: translateX(-50%) !important;
+                      width: 100% !important;
+                      max-width: 800px !important;
+                      margin: 0 !important;
+                      padding: 40px !important;
+                      box-shadow: none !important;
+                      border: 1px solid #000 !important;
+                      background: white !important;
+                    }
+                  }
+                `}</style>
+                <div className="flex justify-end gap-2 print:hidden">
                   <button
                     onClick={() => window.print()}
                     className="py-2 px-4 bg-modava-primary hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Eye, EyeOff, ArrowRight, Store, HeartHandshake, Sparkles } from "lucide-react";
+import { Mail, Eye, EyeOff, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import InputField from "./input-field";
@@ -49,30 +49,6 @@ export default function LoginForm() {
         <p className="text-sm text-[#556061] mt-1">
           Masuk ke akun Modava Anda untuk melanjutkan.
         </p>
-      </div>
-
-      {/* Quick Demo Login Preset Buttons for easy testing */}
-      <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl space-y-2.5">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900">
-          <Sparkles className="w-4 h-4 text-emerald-600" />
-          <span>Uji Coba Pengujian (1-Click Login):</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => handleQuickLogin("umkm")}
-            className="py-2.5 px-3 bg-modava-primary text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition-colors flex items-center justify-center gap-1.5 shadow-sm"
-          >
-            <Store className="w-3.5 h-3.5" /> Login Demo UMKM
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickLogin("kontributor")}
-            className="py-2.5 px-3 bg-amber-500 text-modava-text-dark rounded-xl text-xs font-bold hover:bg-amber-400 transition-colors flex items-center justify-center gap-1.5 shadow-sm"
-          >
-            <HeartHandshake className="w-3.5 h-3.5" /> Login Kontributor
-          </button>
-        </div>
       </div>
 
       {/* Google Login Option */}

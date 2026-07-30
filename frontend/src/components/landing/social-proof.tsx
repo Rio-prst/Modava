@@ -88,10 +88,10 @@ export default function SocialProof() {
         {/* Partner Logos */}
         <div className="pt-8 border-t border-gray-100 text-center space-y-6">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-            Didukung Ekosistem Keuangan & Kompetisi Web Dev 2026
+            Didukung Ekosistem Keuangan & Pendampingan Usaha
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {["Veternity Beraksi 2026", "Pendamping NIB OSS", "Bank Mitra Komunitas", "Asosiasi UMKM Indonesia"].map((item) => (
+            {["Koperasi Digital", "Pendamping NIB OSS", "Bank Mitra Komunitas", "Asosiasi UMKM Indonesia"].map((item) => (
               <div
                 key={item}
                 className="py-3 px-4 bg-gray-50 rounded-2xl border border-gray-200/60 text-xs font-bold text-gray-600 tracking-wide flex items-center justify-center text-center shadow-2xs"

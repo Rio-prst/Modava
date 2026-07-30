@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck, Heart } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export default function RegulationFooter() {
   return (
@@ -22,7 +22,7 @@ export default function RegulationFooter() {
             </p>
             <div className="pt-2 flex items-center gap-3 text-xs text-emerald-200">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Veternity Beraksi 2026 — Web Development Competition</span>
+              <span>Platform Terverifikasi & Aman</span>
             </div>
           </div>
 
@@ -61,10 +61,7 @@ export default function RegulationFooter() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-emerald-900/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-emerald-100/60">
-          <p>© 2026 Modava. All rights reserved. Dikembangkan untuk Veternity 2026.</p>
-          <p className="flex items-center gap-1">
-            Dibuat dengan <Heart className="w-3.5 h-3.5 text-red-400 fill-red-400" /> untuk UMKM Indonesia
-          </p>
+          <p>© 2026 Modava. All rights reserved.</p>
         </div>
 
       </div>

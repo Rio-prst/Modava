@@ -23,9 +23,6 @@ export default function Navbar() {
               <span className="text-2xl font-black tracking-tight text-modava-text-dark group-hover:text-modava-primary transition-colors">
                 Modava
               </span>
-              <span className="hidden sm:inline-block ml-2 text-[10px] font-bold px-2 py-0.5 bg-emerald-100 text-modava-primary rounded-full">
-                Veternity 2026
-              </span>
             </div>
           </Link>
 

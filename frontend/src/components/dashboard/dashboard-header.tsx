@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Plus } from "lucide-react";
 
 export default function DashboardHeader() {
@@ -8,13 +9,16 @@ export default function DashboardHeader() {
           Halo, Warung Berkah
         </h1>
         <p className="text-sm text-[#556061] mt-1">
-          Laporan perkembangan bisnismu hari ini, 24 Mei 2024.
+          Laporan perkembangan bisnismu hari ini.
         </p>
       </div>
-      <button className="inline-flex items-center gap-2 bg-[#0A2328] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition">
+      <Link
+        href="/cash-flow"
+        className="inline-flex items-center gap-2 bg-[#0A2328] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition shadow-sm"
+      >
         <Plus className="w-4 h-4" />
         Tambah Transaksi
-      </button>
+      </Link>
     </div>
   );
 }

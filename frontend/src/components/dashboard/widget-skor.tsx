@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { skorData } from "./dashboard-data";
 
 export default function WidgetSkor() {
@@ -5,7 +7,7 @@ export default function WidgetSkor() {
   const angle = (score / 100) * 180;
 
   return (
-    <div className="bg-white rounded-2xl p-6 flex flex-col items-center justify-between h-full min-h-[300px] border border-gray-100/50 shadow-sm">
+    <div className="bg-white rounded-2xl p-6 flex flex-col items-center justify-between h-full min-h-[300px] border border-gray-100/50 shadow-sm space-y-4">
       <p className="text-[15px] font-semibold text-[#0A2328] text-center">
         Skor Kelayakan Keuangan
       </p>
@@ -60,6 +62,14 @@ export default function WidgetSkor() {
       <p className="text-[12px] text-[#556061] text-center leading-relaxed max-w-[240px]">
         {description}
       </p>
+
+      <Link
+        href="/skor"
+        className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 text-[#13634E] text-xs font-bold rounded-xl text-center flex items-center justify-center gap-1.5 transition"
+      >
+        <span>Lihat Rincian & Analisis Skor</span>
+        <ArrowRight className="w-3.5 h-3.5" />
+      </Link>
     </div>
   );
 }

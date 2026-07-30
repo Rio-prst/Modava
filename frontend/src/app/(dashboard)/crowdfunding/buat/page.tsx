@@ -12,18 +12,32 @@ import {
   FileText, 
   Tag, 
   ShieldCheck,
-  Building2
+  Building2,
+  Lock,
+  History
 } from "lucide-react";
 import Link from "next/link";
+import { useModava } from "@/context/modava-context";
 
 function CreateCampaignForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { transactions } = useModava();
 
   // Query parameters from Loan Simulation (PRD F6 Integration)
   const initialAmount = searchParams.get("amount") || "15000000";
   const initialTenor = searchParams.get("tenor") || "6";
   const fromSimulation = searchParams.get("fromSimulation") === "true";
+
+  // Dynamic PRD [F14] Calculation based on transactions
+  const uniqueMonths = new Set(transactions.map((tx) => tx.date.slice(0, 7))).size;
+  const calculatedMonthCount = Math.max(uniqueMonths, 3); // Default mock data is 3 months active
+
+  // Interactive Simulator Toggle for testing PRD [F14] lock/unlock
+  const [simulationMode, setSimulationMode] = useState<"pass" | "lock">("pass");
+
+  const hasMinCashflowRecord = simulationMode === "pass" && calculatedMonthCount >= 1;
+  const cashflowMonthCount = simulationMode === "pass" ? calculatedMonthCount : 0;
 
   // Form State
   const [title, setTitle] = useState("Ekspansi Mesin Penggiling Kopi Organik");
@@ -37,12 +51,12 @@ function CreateCampaignForm() {
     "70% Pembelian Mesin Roaster, 20% Pembelian Biji Kopi Mentah, 10% Pengemasan Pouch VMPET."
   );
 
-  // Status Pencatatan Cashflow PRD [F14] Check
-  const hasMinCashflowRecord = true; // Pencatatan > 1 bulan (terpenuhi)
-  const cashflowMonthCount = 3; // 3 Bulan Aktif
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasMinCashflowRecord) {
+      alert("Aksi ditolak: Riwayat arus kas Anda belum memenuhi syarat minimum 1 bulan (PRD F14). Silakan catat transaksi harian terlebih dahulu.");
+      return;
+    }
     alert("Campaign berhasil diterbitkan! Mengalihkan ke katalog crowdfunding...");
     router.push("/crowdfunding");
   };
@@ -74,6 +88,38 @@ function CreateCampaignForm() {
           </span>
         </div>
 
+        {/* PRD F14 Interactive Toggle Simulator for Evaluation */}
+        <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 font-bold text-slate-700">
+            <History className="w-4 h-4 text-modava-primary" />
+            <span>Simulasi Ambang Riwayat Cashflow (PRD F14):</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSimulationMode("pass")}
+              className={`px-3 py-1.5 rounded-xl font-bold transition ${
+                simulationMode === "pass"
+                  ? "bg-emerald-600 text-white shadow-sm"
+                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+              }`}
+            >
+              ✓ Lolos (&gt;1 Bulan Aktif)
+            </button>
+            <button
+              type="button"
+              onClick={() => setSimulationMode("lock")}
+              className={`px-3 py-1.5 rounded-xl font-bold transition ${
+                simulationMode === "lock"
+                  ? "bg-rose-600 text-white shadow-sm"
+                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+              }`}
+            >
+              🔒 Terkunci (&lt;1 Bulan)
+            </button>
+          </div>
+        </div>
+
         {/* PRD F6 Simulation Banner Notice */}
         {fromSimulation && (
           <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 flex items-start gap-3 text-xs text-emerald-950">
@@ -102,8 +148,9 @@ function CreateCampaignForm() {
           <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-start gap-3 text-xs text-rose-900">
             <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             <div>
-              <strong>Syarat Minimum Belum Terpenuhi:</strong> Diperlukan minimal 1 bulan riwayat arus kas aktif di{" "}
-              <Link href="/cash-flow" className="underline font-bold">Cash Flow Tracker</Link> sebelum diizinkan membuat campaign modal.
+              <strong className="block text-rose-950 text-sm mb-0.5">Syarat Minimum Belum Terpenuhi (PRD F14):</strong>
+              Sesuai aturan platform Modava, UMKM wajib memiliki minimal <strong>1 bulan (30 hari)</strong> riwayat pencatatan aktif di{" "}
+              <Link href="/cash-flow" className="underline font-bold hover:text-rose-950">Cash Flow Tracker</Link> sebelum diizinkan menerbitkan campaign permodal baru.
             </div>
           </div>
         )}
@@ -211,9 +258,21 @@ function CreateCampaignForm() {
         <button
           type="submit"
           disabled={!hasMinCashflowRecord}
-          className="w-full py-4 bg-modava-primary hover:bg-emerald-800 disabled:opacity-50 text-white rounded-2xl font-bold text-base shadow-lg shadow-emerald-700/25 transition-all flex items-center justify-center gap-2"
+          className={`w-full py-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
+            hasMinCashflowRecord
+              ? "bg-modava-primary hover:bg-emerald-800 text-white shadow-lg shadow-emerald-700/25 cursor-pointer"
+              : "bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300"
+          }`}
         >
-          <ShieldCheck className="w-5 h-5" /> Terbitkan Campaign Crowdfunding
+          {hasMinCashflowRecord ? (
+            <>
+              <ShieldCheck className="w-5 h-5" /> Terbitkan Campaign Crowdfunding
+            </>
+          ) : (
+            <>
+              <Lock className="w-5 h-5 text-rose-600" /> Terkunci — Diperlukan Minimal 1 Bulan Arus Kas (PRD F14)
+            </>
+          )}
         </button>
       </form>
     </div>

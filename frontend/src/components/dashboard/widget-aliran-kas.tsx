@@ -1,14 +1,25 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { aliranKasData } from "./dashboard-data";
 
 export default function WidgetAliranKas() {
   return (
     <div className="bg-white rounded-2xl p-5 space-y-3 border border-gray-100/50 shadow-sm flex flex-col justify-between">
       <div className="flex items-center justify-between">
-        <p className="text-[13px] text-[#0A2328] font-semibold">
-          Aliran Kas (Mei)
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-[13px] text-[#0A2328] font-semibold">
+            Aliran Kas (Mei)
+          </p>
+          <Link
+            href="/cash-flow"
+            className="text-xs font-semibold text-[#13634E] hover:underline flex items-center gap-0.5"
+          >
+            <span>Rincian</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
         <div className="flex items-center gap-4 text-xs font-medium">
           <span className="flex items-center gap-1.5 text-[#0A2328]">
             <span className="w-2.5 h-2.5 rounded-full bg-[#13634E]" />

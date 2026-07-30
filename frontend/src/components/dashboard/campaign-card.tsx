@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { campaignActive } from "./dashboard-data";
 
 export default function CampaignCard() {
@@ -48,9 +49,12 @@ export default function CampaignCard() {
             <span className="text-[#556061]">Sisa Waktu </span>
             <span className="font-bold block sm:inline">{campaignActive.daysLeft} Hari Lagi</span>
           </div>
-          <button className="bg-[#C68A16] hover:bg-[#B37B12] text-white text-[12px] font-semibold rounded-xl px-5 py-2.5 transition shadow-sm">
+          <Link
+            href="/crowdfunding"
+            className="bg-[#C68A16] hover:bg-[#B37B12] text-white text-[12px] font-semibold rounded-xl px-5 py-2.5 transition shadow-sm inline-block"
+          >
             Kelola Campaign
-          </button>
+          </Link>
         </div>
       </div>
     </div>
