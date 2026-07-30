@@ -2,27 +2,54 @@ import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client.js';
 
-const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL']! });
+const adapter = new PrismaPg({
+  connectionString: process.env['DATABASE_URL']!,
+});
 const prisma = new PrismaClient({ adapter });
 
 const categories = [
   { name: 'Kuliner', slug: 'kuliner', description: 'Makanan dan minuman' },
   { name: 'Fashion', slug: 'fashion', description: 'Pakaian dan aksesoris' },
-  { name: 'Kerajinan', slug: 'kerajinan', description: 'Kerajinan tangan dan handmade' },
-  { name: 'Pertanian', slug: 'pertanian', description: 'Produk pertanian dan perkebunan' },
+  {
+    name: 'Kerajinan',
+    slug: 'kerajinan',
+    description: 'Kerajinan tangan dan handmade',
+  },
+  {
+    name: 'Pertanian',
+    slug: 'pertanian',
+    description: 'Produk pertanian dan perkebunan',
+  },
   { name: 'Peternakan', slug: 'peternakan', description: 'Produk peternakan' },
-  { name: 'Perikanan', slug: 'perikanan', description: 'Produk perikanan dan kelautan' },
+  {
+    name: 'Perikanan',
+    slug: 'perikanan',
+    description: 'Produk perikanan dan kelautan',
+  },
   { name: 'Jasa', slug: 'jasa', description: 'Jasa dan pelayanan' },
-  { name: 'Teknologi', slug: 'teknologi', description: 'Teknologi dan digital' },
-  { name: 'Pendidikan', slug: 'pendidikan', description: 'Pendidikan dan pelatihan' },
-  { name: 'Kesehatan', slug: 'kesehatan', description: 'Produk kesehatan dan kecantikan' },
+  {
+    name: 'Teknologi',
+    slug: 'teknologi',
+    description: 'Teknologi dan digital',
+  },
+  {
+    name: 'Pendidikan',
+    slug: 'pendidikan',
+    description: 'Pendidikan dan pelatihan',
+  },
+  {
+    name: 'Kesehatan',
+    slug: 'kesehatan',
+    description: 'Produk kesehatan dan kecantikan',
+  },
 ];
 
 const legalitasGuides = [
   {
     documentType: 'NIB' as const,
     title: 'Panduan Pengurusan NIB',
-    content: 'Nomor Induk Berusaha (NIB) adalah identitas pelaku usaha yang diterbitkan oleh OSS RBA. NIB berlaku sebagai TDP, Izin Lokasi, dan Izin Usaha. Proses pengurusan dilakukan secara online melalui sistem OSS.',
+    content:
+      'Nomor Induk Berusaha (NIB) adalah identitas pelaku usaha yang diterbitkan oleh OSS RBA. NIB berlaku sebagai TDP, Izin Lokasi, dan Izin Usaha. Proses pengurusan dilakukan secara online melalui sistem OSS.',
     steps: [
       'Siapkan dokumen: KTP, NPWP, dan data usaha',
       'Buka portal OSS RBA (oss.go.id)',
@@ -36,7 +63,8 @@ const legalitasGuides = [
   {
     documentType: 'NPWP' as const,
     title: 'Panduan Pembuatan NPWP',
-    content: 'Nomor Pokok Wajib Pajak (NPWP) adalah nomor yang diberikan kepada wajib pajak sebagai sarana administrasi perpajakan. Pengajuan NPWP dapat dilakukan melalui e-registration DJP Online.',
+    content:
+      'Nomor Pokok Wajib Pajak (NPWP) adalah nomor yang diberikan kepada wajib pajak sebagai sarana administrasi perpajakan. Pengajuan NPWP dapat dilakukan melalui e-registration DJP Online.',
     steps: [
       'Akses ereg.pajak.go.id',
       'Daftar dengan NIK KTP dan KK',
@@ -50,7 +78,8 @@ const legalitasGuides = [
   {
     documentType: 'IUMK' as const,
     title: 'Panduan IUMK',
-    content: 'Izin Usaha Mikro dan Kecil (IUMK) adalah izin usaha untuk pelaku UMKM yang diterbitkan oleh pemerintah daerah. IUMK dapat diurus melalui Dinas Perindustrian dan Perdagangan setempat atau OSS RBA.',
+    content:
+      'Izin Usaha Mikro dan Kecil (IUMK) adalah izin usaha untuk pelaku UMKM yang diterbitkan oleh pemerintah daerah. IUMK dapat diurus melalui Dinas Perindustrian dan Perdagangan setempat atau OSS RBA.',
     steps: [
       'Siapkan NIB, KTP, NPWP, dan pasfoto',
       'Ajukan ke Dinas Perdagangan setempat',
@@ -63,7 +92,8 @@ const legalitasGuides = [
   {
     documentType: 'SERTIFIKAT_HALAL' as const,
     title: 'Panduan Sertifikat Halal',
-    content: 'Sertifikat Halal adalah jaminan bahwa produk telah memenuhi syarat kehalalan sesuai syariat Islam. Pengajuan dilakukan melalui BPJPH dan LPH yang ditunjuk.',
+    content:
+      'Sertifikat Halal adalah jaminan bahwa produk telah memenuhi syarat kehalalan sesuai syariat Islam. Pengajuan dilakukan melalui BPJPH dan LPH yang ditunjuk.',
     steps: [
       'Pastikan bahan baku halal dan terdokumentasi',
       'Ajukan ke BPJPH melalui Sihalal',
@@ -76,7 +106,8 @@ const legalitasGuides = [
   {
     documentType: 'TDP' as const,
     title: 'Panduan TDP',
-    content: 'Tanda Daftar Perusahaan (TDP) adalah bukti pendaftaran perusahaan yang diterbitkan oleh Dinas Perindustrian dan Perdagangan. Sejak diterbitkannya NIB, TDP sudah terintegrasi dengan NIB.',
+    content:
+      'Tanda Daftar Perusahaan (TDP) adalah bukti pendaftaran perusahaan yang diterbitkan oleh Dinas Perindustrian dan Perdagangan. Sejak diterbitkannya NIB, TDP sudah terintegrasi dengan NIB.',
     steps: [
       'Siapkan NIB, Akta Pendirian, dan KTP',
       'Ajukan ke Dinas Perdagangan',
@@ -96,11 +127,36 @@ type ClerkUser = {
 };
 
 const clerkUsers: ClerkUser[] = [
-  { clerkUserId: 'clerk_demo_warung_makan', email: 'warung@demo.modava.id', name: 'Budi Santoso', role: 'UMKM' },
-  { clerkUserId: 'clerk_demo_batik', email: 'batik@demo.modava.id', name: 'Sari Dewi', role: 'UMKM' },
-  { clerkUserId: 'clerk_demo_kerajinan', email: 'kerajinan@demo.modava.id', name: 'Agus Pratama', role: 'UMKM' },
-  { clerkUserId: 'clerk_demo_contributor', email: 'contributor@demo.modava.id', name: 'Rina Wijaya', role: 'CONTRIBUTOR' },
-  { clerkUserId: 'clerk_demo_admin', email: 'admin@demo.modava.id', name: 'Admin Modava', role: 'ADMIN' },
+  {
+    clerkUserId: 'clerk_demo_warung_makan',
+    email: 'warung@demo.modava.id',
+    name: 'Budi Santoso',
+    role: 'UMKM',
+  },
+  {
+    clerkUserId: 'clerk_demo_batik',
+    email: 'batik@demo.modava.id',
+    name: 'Sari Dewi',
+    role: 'UMKM',
+  },
+  {
+    clerkUserId: 'clerk_demo_kerajinan',
+    email: 'kerajinan@demo.modava.id',
+    name: 'Agus Pratama',
+    role: 'UMKM',
+  },
+  {
+    clerkUserId: 'clerk_demo_contributor',
+    email: 'contributor@demo.modava.id',
+    name: 'Rina Wijaya',
+    role: 'CONTRIBUTOR',
+  },
+  {
+    clerkUserId: 'clerk_demo_admin',
+    email: 'admin@demo.modava.id',
+    name: 'Admin Modava',
+    role: 'ADMIN',
+  },
 ];
 
 async function main() {
@@ -133,20 +189,26 @@ async function main() {
     createdUsers[u.clerkUserId] = { id: user.id };
   }
 
-  const kategoriKuliner = await prisma.businessCategory.findUniqueOrThrow({ where: { slug: 'kuliner' } });
-  const kategoriFashion = await prisma.businessCategory.findUniqueOrThrow({ where: { slug: 'fashion' } });
-  const kategoriKerajinan = await prisma.businessCategory.findUniqueOrThrow({ where: { slug: 'kerajinan' } });
+  const kategoriKuliner = await prisma.businessCategory.findUniqueOrThrow({
+    where: { slug: 'kuliner' },
+  });
+  const kategoriFashion = await prisma.businessCategory.findUniqueOrThrow({
+    where: { slug: 'fashion' },
+  });
+  const kategoriKerajinan = await prisma.businessCategory.findUniqueOrThrow({
+    where: { slug: 'kerajinan' },
+  });
 
   console.log('Seeding UMKM Profiles...');
 
-  // Warung Makan Sari Rasa — complete profile, good legalitas, 6 months cash flow
   const warung = await prisma.uMKMProfile.upsert({
     where: { userId: createdUsers['clerk_demo_warung_makan'].id },
     update: {},
     create: {
       userId: createdUsers['clerk_demo_warung_makan'].id,
       businessName: 'Warung Makan Sari Rasa',
-      description: 'Warung makan nusantara dengan menu khas Jawa Timur, buka setiap hari dari pukul 07.00 - 21.00 WIB.',
+      description:
+        'Warung makan nusantara dengan menu khas Jawa Timur, buka setiap hari dari pukul 07.00 - 21.00 WIB.',
       categoryId: kategoriKuliner.id,
       address: 'Jl. Merdeka No. 123',
       city: 'Malang',
@@ -158,14 +220,14 @@ async function main() {
     },
   });
 
-  // Batik Ciprat Nusantara — partial legalitas, 3 months cash flow
   const batik = await prisma.uMKMProfile.upsert({
     where: { userId: createdUsers['clerk_demo_batik'].id },
     update: {},
     create: {
       userId: createdUsers['clerk_demo_batik'].id,
       businessName: 'Batik Ciprat Nusantara',
-      description: 'Produksi batik ciprat khas Pekalongan dengan motif modern untuk kalangan muda.',
+      description:
+        'Produksi batik ciprat khas Pekalongan dengan motif modern untuk kalangan muda.',
       categoryId: kategoriFashion.id,
       address: 'Jl. Batik Indah No. 45',
       city: 'Pekalongan',
@@ -177,7 +239,6 @@ async function main() {
     },
   });
 
-  // Kerajinan Tangan Lestari — basic profile, no legalitas, 1 month cash flow
   const kerajinan = await prisma.uMKMProfile.upsert({
     where: { userId: createdUsers['clerk_demo_kerajinan'].id },
     update: {},
@@ -198,11 +259,17 @@ async function main() {
 
   console.log('Seeding Legalitas Documents...');
 
-  const adminUser = await prisma.user.findFirstOrThrow({ where: { role: 'ADMIN' } });
+  const adminUser = await prisma.user.findFirstOrThrow({
+    where: { role: 'ADMIN' },
+  });
 
-  // Warung: NIB verified, NPWP verified, IUMK submitted
   const docNibWarung = await prisma.legalitasDocument.upsert({
-    where: { umkmProfileId_documentType: { umkmProfileId: warung.id, documentType: 'NIB' } },
+    where: {
+      umkmProfileId_documentType: {
+        umkmProfileId: warung.id,
+        documentType: 'NIB',
+      },
+    },
     update: {},
     create: {
       umkmProfileId: warung.id,
@@ -217,7 +284,12 @@ async function main() {
   });
 
   const docNpwpWarung = await prisma.legalitasDocument.upsert({
-    where: { umkmProfileId_documentType: { umkmProfileId: warung.id, documentType: 'NPWP' } },
+    where: {
+      umkmProfileId_documentType: {
+        umkmProfileId: warung.id,
+        documentType: 'NPWP',
+      },
+    },
     update: {},
     create: {
       umkmProfileId: warung.id,
@@ -232,7 +304,12 @@ async function main() {
   });
 
   await prisma.legalitasDocument.upsert({
-    where: { umkmProfileId_documentType: { umkmProfileId: warung.id, documentType: 'IUMK' } },
+    where: {
+      umkmProfileId_documentType: {
+        umkmProfileId: warung.id,
+        documentType: 'IUMK',
+      },
+    },
     update: {},
     create: {
       umkmProfileId: warung.id,
@@ -244,9 +321,13 @@ async function main() {
     },
   });
 
-  // Batik: NIB verified, NPWP submitted, IUMK not uploaded
   await prisma.legalitasDocument.upsert({
-    where: { umkmProfileId_documentType: { umkmProfileId: batik.id, documentType: 'NIB' } },
+    where: {
+      umkmProfileId_documentType: {
+        umkmProfileId: batik.id,
+        documentType: 'NIB',
+      },
+    },
     update: {},
     create: {
       umkmProfileId: batik.id,
@@ -261,7 +342,12 @@ async function main() {
   });
 
   await prisma.legalitasDocument.upsert({
-    where: { umkmProfileId_documentType: { umkmProfileId: batik.id, documentType: 'NPWP' } },
+    where: {
+      umkmProfileId_documentType: {
+        umkmProfileId: batik.id,
+        documentType: 'NPWP',
+      },
+    },
     update: {},
     create: {
       umkmProfileId: batik.id,
@@ -273,13 +359,10 @@ async function main() {
     },
   });
 
-  // Kerajinan: no documents at all
-
   console.log('Seeding Cash Flow Transactions...');
 
   const currentYear = 2026;
 
-  // Warung Makan: 6 months of data (Jan-Jun 2026)
   const warungTransactions: Array<{
     type: 'INCOME' | 'EXPENSE';
     amount: string;
@@ -320,7 +403,6 @@ async function main() {
     });
   }
 
-  // Batik: 3 months (Apr-Jun 2026)
   const batikMonthlyData = [
     { month: 4, income: '8000000', expense: '5500000' },
     { month: 5, income: '9500000', expense: '6200000' },
@@ -350,7 +432,6 @@ async function main() {
     });
   }
 
-  // Kerajinan: 1 month only (Jun 2026)
   await prisma.cashFlowTransaction.create({
     data: {
       umkmProfileId: kerajinan.id,
@@ -362,14 +443,19 @@ async function main() {
     },
   });
 
-  // Also create CashFlowMonthlySummary entries for each UMKM (so credit score can pick them up)
   console.log('Seeding CashFlowMonthlySummary...');
 
   for (const md of warungMonthlyData) {
     const income = Number(md.income);
     const expense = Number(md.expense);
     await prisma.cashFlowMonthlySummary.upsert({
-      where: { umkmProfileId_month_year: { umkmProfileId: warung.id, month: md.month, year: currentYear } },
+      where: {
+        umkmProfileId_month_year: {
+          umkmProfileId: warung.id,
+          month: md.month,
+          year: currentYear,
+        },
+      },
       update: {},
       create: {
         umkmProfileId: warung.id,
@@ -387,7 +473,13 @@ async function main() {
     const income = Number(md.income);
     const expense = Number(md.expense);
     await prisma.cashFlowMonthlySummary.upsert({
-      where: { umkmProfileId_month_year: { umkmProfileId: batik.id, month: md.month, year: currentYear } },
+      where: {
+        umkmProfileId_month_year: {
+          umkmProfileId: batik.id,
+          month: md.month,
+          year: currentYear,
+        },
+      },
       update: {},
       create: {
         umkmProfileId: batik.id,
@@ -401,9 +493,14 @@ async function main() {
     });
   }
 
-  // Kerajinan: 1 month summary
   await prisma.cashFlowMonthlySummary.upsert({
-    where: { umkmProfileId_month_year: { umkmProfileId: kerajinan.id, month: 6, year: currentYear } },
+    where: {
+      umkmProfileId_month_year: {
+        umkmProfileId: kerajinan.id,
+        month: 6,
+        year: currentYear,
+      },
+    },
     update: {},
     create: {
       umkmProfileId: kerajinan.id,
@@ -418,9 +515,8 @@ async function main() {
 
   console.log('Seeding CreditScores...');
 
-  // Warung: high score (good cash flow, good legalitas)
   const warungCreditScore = await prisma.creditScore.upsert({
-    where: { id: '' }, // force create
+    where: { id: '' },
     update: {},
     create: {
       umkmProfileId: warung.id,
@@ -439,7 +535,8 @@ async function main() {
         recommendations: [
           {
             field: 'legalitas',
-            message: 'Lengkapi IUMK (Izin Usaha Mikro dan Kecil) untuk meningkatkan skor legalitas.',
+            message:
+              'Lengkapi IUMK (Izin Usaha Mikro dan Kecil) untuk meningkatkan skor legalitas.',
             potential: '+0.2 poin',
           },
         ],
@@ -447,7 +544,6 @@ async function main() {
     },
   });
 
-  // Batik: medium score
   await prisma.creditScore.upsert({
     where: { id: '' },
     update: {},
@@ -473,7 +569,8 @@ async function main() {
           },
           {
             field: 'legalitas',
-            message: 'Lengkapi IUMK (Izin Usaha Mikro dan Kecil) untuk meningkatkan skor legalitas.',
+            message:
+              'Lengkapi IUMK (Izin Usaha Mikro dan Kecil) untuk meningkatkan skor legalitas.',
             potential: '+0.2 poin',
           },
         ],
@@ -481,7 +578,6 @@ async function main() {
     },
   });
 
-  // Kerajinan: low score (no legalitas, only 1 month cash flow)
   await prisma.creditScore.upsert({
     where: { id: '' },
     update: {},
@@ -502,7 +598,8 @@ async function main() {
         recommendations: [
           {
             field: 'legalitas',
-            message: 'Lengkapi NIB (Nomor Induk Berusaha) untuk meningkatkan skor legalitas.',
+            message:
+              'Lengkapi NIB (Nomor Induk Berusaha) untuk meningkatkan skor legalitas.',
             potential: '+0.2 poin',
           },
           {
@@ -512,17 +609,20 @@ async function main() {
           },
           {
             field: 'legalitas',
-            message: 'Lengkapi IUMK (Izin Usaha Mikro dan Kecil) untuk meningkatkan skor legalitas.',
+            message:
+              'Lengkapi IUMK (Izin Usaha Mikro dan Kecil) untuk meningkatkan skor legalitas.',
             potential: '+0.2 poin',
           },
           {
             field: 'cashFlow',
-            message: 'Catat arus kas 3 bulan berturut-turut untuk +0,3 poin pada skor arus kas.',
+            message:
+              'Catat arus kas 3 bulan berturut-turut untuk +0,3 poin pada skor arus kas.',
             potential: '+0.3 poin',
           },
           {
             field: 'platform',
-            message: 'Buat campaign crowdfunding pertama Anda untuk mendapatkan skor riwayat platform.',
+            message:
+              'Buat campaign crowdfunding pertama Anda untuk mendapatkan skor riwayat platform.',
             potential: '+1.2 poin',
           },
         ],
@@ -558,12 +658,12 @@ async function main() {
 
   console.log('Seeding Campaigns...');
 
-  // Warung Makan: ACTIVE campaign (can fundraise)
   const campaignWarung = await prisma.campaign.create({
     data: {
       umkmProfileId: warung.id,
       title: 'Perluasan Warung Makan Sari Rasa',
-      description: 'Kami ingin memperluas warung makan untuk menambah kapasitas tempat duduk dan membuka cabang baru di area kampus Universitas Brawijaya. Dana akan digunakan untuk renovasi, pembelian peralatan dapur, dan modal kerja 3 bulan pertama.',
+      description:
+        'Kami ingin memperluas warung makan untuk menambah kapasitas tempat duduk dan membuka cabang baru di area kampus Universitas Brawijaya. Dana akan digunakan untuk renovasi, pembelian peralatan dapur, dan modal kerja 3 bulan pertama.',
       fundingGoal: '10000000',
       amountRaised: '3500000',
       status: 'ACTIVE',
@@ -573,12 +673,12 @@ async function main() {
     },
   });
 
-  // Batik: DRAFT campaign (cannot activate — less than minimum cash flow summaries)
   await prisma.campaign.create({
     data: {
       umkmProfileId: batik.id,
       title: 'Pengembangan Motif Batik Digital',
-      description: 'Mengembangkan motif batik baru dengan sentuhan digital untuk menarik pasar milenial. Dana akan digunakan untuk pelatihan desain, pembelian software, dan pemasaran digital.',
+      description:
+        'Mengembangkan motif batik baru dengan sentuhan digital untuk menarik pasar milenial. Dana akan digunakan untuk pelatihan desain, pembelian software, dan pemasaran digital.',
       fundingGoal: '5000000',
       amountRaised: '0',
       status: 'DRAFT',
@@ -590,7 +690,6 @@ async function main() {
 
   const contributorUser = createdUsers['clerk_demo_contributor'];
 
-  // Contributor pledges to Warung Makan's campaign
   await prisma.pledge.create({
     data: {
       campaignId: campaignWarung.id,
@@ -644,7 +743,7 @@ async function main() {
 
   await prisma.notification.create({
     data: {
-      userId: warung.id, // owner of Warung Makan
+      userId: createdUsers['clerk_demo_warung_makan'].id,
       type: 'SCORE_UPDATED',
       title: 'Skor kelayakan diperbarui!',
       message: 'Skor kelayakan keuangan Anda kini 3.42 (Tier B).',
@@ -655,7 +754,7 @@ async function main() {
 
   await prisma.notification.create({
     data: {
-      userId: warung.id,
+      userId: createdUsers['clerk_demo_warung_makan'].id,
       type: 'LEGALITAS_VERIFIED',
       title: 'Dokumen terverifikasi!',
       message: 'Dokumen NIB Anda telah diverifikasi oleh admin.',
@@ -666,7 +765,7 @@ async function main() {
 
   await prisma.notification.create({
     data: {
-      userId: warung.id,
+      userId: createdUsers['clerk_demo_warung_makan'].id,
       type: 'LEGALITAS_VERIFIED',
       title: 'Dokumen terverifikasi!',
       message: 'Dokumen NPWP Anda telah diverifikasi oleh admin.',
@@ -680,7 +779,8 @@ async function main() {
       userId: contributorUser.id,
       type: 'PLEDGE_NEW',
       title: 'Pendanaan berhasil!',
-      message: 'Anda telah mendanai campaign "Perluasan Warung Makan Sari Rasa" sebesar Rp3.500.000.',
+      message:
+        'Anda telah mendanai campaign "Perluasan Warung Makan Sari Rasa" sebesar Rp3.500.000.',
       referenceId: campaignWarung.id,
       referenceType: 'campaign',
     },
