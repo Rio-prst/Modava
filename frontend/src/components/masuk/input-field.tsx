@@ -2,7 +2,7 @@
 
 import { type LucideIcon } from "lucide-react";
 
-interface InputFieldProps {
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   type?: string;
   placeholder?: string;
@@ -20,6 +20,7 @@ export default function InputField({
   trailing,
   error,
   rightLabel,
+  ...props
 }: InputFieldProps) {
   return (
     <div className="space-y-1.5">
@@ -33,6 +34,7 @@ export default function InputField({
         <input
           type={type}
           placeholder={placeholder}
+          {...props}
           className={`w-full h-11 rounded-lg border px-3 text-sm text-[#0A2328] placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-[#1E6B52] focus:border-transparent ${
             error ? "border-red-500" : "border-[#D1D5DB]"
           } ${Icon ? "pr-10" : ""} ${trailing ? "pr-10" : ""}`}

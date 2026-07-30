@@ -117,7 +117,7 @@ export default function LoginForm() {
           placeholder="nama@ukmanda.com"
           icon={Mail}
           value={email}
-          onChange={(e: any) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
         />
 
         <InputField
@@ -125,7 +125,7 @@ export default function LoginForm() {
           type={showPassword ? "text" : "password"}
           placeholder="Masukkan kata sandi"
           value={password}
-          onChange={(e: any) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           rightLabel={
             <span className="text-[12px] font-semibold text-[#0A2328] hover:underline cursor-pointer">
               Lupa password?
