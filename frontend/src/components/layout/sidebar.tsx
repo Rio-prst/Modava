@@ -26,7 +26,6 @@ const mainNav = [
 const bottomNav = [
   { label: "Notifikasi", href: "/notifikasi", icon: Bell },
   { label: "Profil", href: "/profil", icon: User },
-  { label: "Admin Panel", href: "/admin/legalitas", icon: ShieldCheck },
 ];
 
 export default function Sidebar() {
