@@ -41,11 +41,19 @@ enum CampaignStatus {
 
 enum NotificationType {
   PLEDGE_NEW
+  PLEDGE_VERIFIED
+  PLEDGE_REJECTED
   TARGET_REACHED
   CAMPAIGN_ENDED
   LEGALITAS_VERIFIED
   LEGALITAS_REJECTED
   SCORE_UPDATED
+}
+
+enum PledgeStatus {
+  PENDING
+  VERIFIED
+  REJECTED
 }
 
 enum MediaType {
@@ -70,6 +78,7 @@ model User {
 
   umkmProfile       UMKMProfile?
   pledges           Pledge[]
+  verifiedPledges   Pledge[] @relation("VerifiedPledges")
   notifications     Notification[]
   verifiedDocuments LegalitasDocument[] @relation("DocumentVerifier")
 }
@@ -266,17 +275,24 @@ model FundUsageReport {
 }
 
 model Pledge {
-  id         String   @id @default(uuid())
-  campaignId String
-  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  amount     Decimal  @db.Decimal(15, 2)
-  message    String?
-  createdAt  DateTime @default(now())
+  id           String       @id @default(uuid())
+  campaignId   String
+  campaign     Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User         @relation(fields: [userId], references: [id])
+  amount       Decimal      @db.Decimal(15, 2)
+  message      String?
+  status       PledgeStatus @default(PENDING)
+  proofUrl     String?
+  rejectReason String?
+  verifiedById String?
+  verifiedAt   DateTime?
+  verifiedBy   User?        @relation("VerifiedPledges", fields: [verifiedById], references: [id])
+  createdAt    DateTime     @default(now())
 
   @@index([campaignId])
   @@index([userId])
+  @@index([status])
 }
 
 model Notification {

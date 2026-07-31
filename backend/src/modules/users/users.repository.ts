@@ -22,19 +22,37 @@ export class UsersRepository implements IUsersRepository {
   }
 
   upsert(clerkUserId: string, data: UpsertUserData) {
+    const adminEmails = (process.env['ADMIN_EMAILS'] ?? '')
+      .split(',')
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0);
+
+    const isAdmin = adminEmails.includes((data.email ?? '').toLowerCase());
+
+    const updateData: {
+      email: string;
+      name: string | null;
+      avatarUrl: string | null;
+      role?: 'ADMIN';
+    } = {
+      email: data.email,
+      name: data.name,
+      avatarUrl: data.avatarUrl,
+    };
+
+    if (isAdmin) {
+      updateData.role = 'ADMIN';
+    }
+
     return this.prisma.user.upsert({
       where: { clerkUserId },
-      update: {
-        email: data.email,
-        name: data.name,
-        avatarUrl: data.avatarUrl,
-      },
+      update: updateData,
       create: {
         clerkUserId,
         email: data.email,
         name: data.name,
         avatarUrl: data.avatarUrl,
-        role: 'CONTRIBUTOR',
+        role: isAdmin ? 'ADMIN' : 'CONTRIBUTOR',
       },
     });
   }
