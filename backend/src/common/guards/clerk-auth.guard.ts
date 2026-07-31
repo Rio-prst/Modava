@@ -4,9 +4,21 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { verifyToken } from '@clerk/backend';
+import { createClerkClient, verifyToken } from '@clerk/backend';
+import type { ClerkClient } from '@clerk/backend';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import type { AuthenticatedRequest } from '../types/api-response.js';
+
+let clerkClient: ClerkClient | null = null;
+
+function getClerkClient(): ClerkClient {
+  if (!clerkClient) {
+    clerkClient = createClerkClient({
+      secretKey: process.env['CLERK_SECRET_KEY'],
+    });
+  }
+  return clerkClient;
+}
 
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
@@ -35,35 +47,28 @@ export class ClerkAuthGuard implements CanActivate {
         throw new UnauthorizedException('Invalid token payload');
       }
 
+      const clerkUser = await getClerkClient().users.getUser(clerkUserId);
+
       const email =
-        typeof payload['email'] === 'string' ? payload['email'] : '';
-      const name = typeof payload['name'] === 'string' ? payload['name'] : null;
-      const avatarUrl =
-        typeof payload['picture'] === 'string' ? payload['picture'] : null;
+        clerkUser.emailAddresses[0]?.emailAddress ?? '';
+      const name =
+        clerkUser.firstName || clerkUser.lastName
+          ? `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim()
+          : null;
+      const avatarUrl = clerkUser.imageUrl ?? null;
 
       const localUser = await this.prisma.user.findUnique({
         where: { clerkUserId },
       });
 
-      if (localUser) {
-        request.user = {
-          id: localUser.id,
-          clerkUserId: localUser.clerkUserId,
-          email: localUser.email,
-          name: localUser.name,
-          avatarUrl: localUser.avatarUrl,
-          role: localUser.role,
-        };
-      } else {
-        request.user = {
-          id: '',
-          clerkUserId,
-          email,
-          name,
-          avatarUrl,
-          role: 'CONTRIBUTOR',
-        };
-      }
+      request.user = {
+        id: localUser?.id ?? '',
+        clerkUserId,
+        email,
+        name,
+        avatarUrl,
+        role: localUser?.role ?? 'CONTRIBUTOR',
+      };
 
       return true;
     } catch {
