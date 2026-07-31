@@ -1,5 +1,7 @@
 export type NotificationType =
   | 'PLEDGE_NEW'
+  | 'PLEDGE_VERIFIED'
+  | 'PLEDGE_REJECTED'
   | 'TARGET_REACHED'
   | 'CAMPAIGN_ENDED'
   | 'LEGALITAS_VERIFIED'

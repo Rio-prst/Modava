@@ -55,31 +55,14 @@ export class PledgeService implements IPledgeService {
       userId: user.id,
       amount: data.amount,
       message: data.message,
+      proofUrl: data.proofUrl,
     });
-
-    const newAmountRaised = campaign.amountRaised + data.amount;
-
-    if (newAmountRaised >= campaign.fundingGoal) {
-      await this.pledgeRepository.updateCampaignStatus(
-        data.campaignId,
-        'FUNDED',
-      );
-
-      await this.notificationService.create({
-        userId: campaignOwner.userId,
-        type: 'TARGET_REACHED',
-        title: 'Target campaign tercapai!',
-        message: `Selamat! Campaign Anda telah mencapai target pendanaan sebesar Rp${campaign.fundingGoal.toLocaleString()}.`,
-        referenceId: pledge.id,
-        referenceType: 'pledge',
-      });
-    }
 
     await this.notificationService.create({
       userId: campaignOwner.userId,
       type: 'PLEDGE_NEW',
-      title: 'Pledge baru diterima!',
-      message: `Ada pledge baru sebesar Rp${pledge.amount.toLocaleString()} untuk campaign Anda.`,
+      title: 'Pledge baru menunggu verifikasi!',
+      message: `Ada pledge sebesar Rp${pledge.amount.toLocaleString()} menunggu verifikasi admin untuk campaign Anda.`,
       referenceId: pledge.id,
       referenceType: 'pledge',
     });
@@ -104,11 +87,11 @@ export class PledgeService implements IPledgeService {
       throw new ForbiddenException('Access denied.');
     }
 
-    await this.pledgeRepository.deletePledgeAndRefund(
-      id,
-      pledge.campaignId,
-      pledge.amount,
-    );
+    if (pledge.status !== 'PENDING') {
+      throw new BadRequestException('Only pending pledges can be cancelled.');
+    }
+
+    await this.pledgeRepository.deletePledge(id);
   }
 
   async findAllByCampaign(campaignId: string) {
@@ -129,5 +112,89 @@ export class PledgeService implements IPledgeService {
     }
 
     return this.pledgeRepository.findAllByUserId(user.id);
+  }
+
+  async findPending() {
+    return this.pledgeRepository.findPending();
+  }
+
+  async verify(clerkUserId: string, id: string) {
+    const admin = await this.pledgeRepository.findUserByClerkUserId(clerkUserId);
+
+    if (!admin) {
+      throw new NotFoundException('Admin user not found.');
+    }
+
+    const pledge = await this.pledgeRepository.findPledgeById(id);
+
+    if (!pledge) {
+      throw new NotFoundException('Pledge not found.');
+    }
+
+    if (pledge.status !== 'PENDING') {
+      throw new BadRequestException('Only pending pledges can be verified.');
+    }
+
+    const verified = await this.pledgeRepository.verify(id, admin.id);
+
+    if (verified.amountRaised >= verified.fundingGoal) {
+      await this.pledgeRepository.updateCampaignStatus(
+        verified.campaignId,
+        'FUNDED',
+      );
+
+      const campaignOwner = await this.pledgeRepository.findCampaignOwnerId(
+        verified.campaignId,
+      );
+
+      if (campaignOwner) {
+        await this.notificationService.create({
+          userId: campaignOwner.userId,
+          type: 'TARGET_REACHED',
+          title: 'Target campaign tercapai!',
+          message: `Selamat! Campaign Anda telah mencapai target pendanaan sebesar Rp${verified.fundingGoal.toLocaleString()}.`,
+          referenceId: verified.id,
+          referenceType: 'pledge',
+        });
+      }
+    }
+
+    await this.notificationService.create({
+      userId: verified.userId,
+      type: 'PLEDGE_VERIFIED',
+      title: 'Pledge Anda terverifikasi!',
+      message: `Pledge Anda sebesar Rp${verified.amount.toLocaleString()} telah terverifikasi. Terima kasih atas dukungan Anda!`,
+      referenceId: verified.id,
+      referenceType: 'pledge',
+    });
+
+    return verified;
+  }
+
+  async reject(id: string, reason?: string) {
+    const pledge = await this.pledgeRepository.findPledgeById(id);
+
+    if (!pledge) {
+      throw new NotFoundException('Pledge not found.');
+    }
+
+    if (pledge.status !== 'PENDING') {
+      throw new BadRequestException('Only pending pledges can be rejected.');
+    }
+
+    const rejected = await this.pledgeRepository.reject(id, reason);
+
+    await this.notificationService.create({
+      userId: rejected.userId,
+      type: 'PLEDGE_REJECTED',
+      title: 'Pledge Anda ditolak',
+      message: reason
+        ? `Pledge Anda ditolak dengan alasan: ${reason}`
+        : 'Pledge Anda ditolak oleh admin.',
+      referenceId: rejected.id,
+      referenceType: 'pledge',
+    });
+
+    return rejected;
   }
 }
