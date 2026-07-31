@@ -1,14 +1,49 @@
 "use client";
 
 import { useState } from "react";
-import { Lightbulb, Lock } from "lucide-react";
+import { Lightbulb, CheckCircle2, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useModava } from "@/context/modava-context";
 
 export default function SkorRecommendations() {
+  const { transactions, legalDocs, creditScore } = useModava();
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+
+  const verifiedCount = legalDocs.filter((d) => d.status === "verified").length;
 
   const toggleItem = (id: string) => {
     setCheckedItems((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const recommendations = [
+    {
+      id: "cashflow",
+      title: "Catat Pemasukan & Pengeluaran Harian",
+      points: "+20 Poin",
+      desc: "Lakukan pencatatan kas di Cash Flow Tracker untuk membangun reputasi kesehatan finansial.",
+      link: "/cash-flow",
+      actionText: "Ke Cash Flow",
+      isDone: transactions.length >= 3,
+    },
+    {
+      id: "legalitas",
+      title: "Unggah Dokumen Legalitas (NIB & NPWP)",
+      points: "+30 Poin",
+      desc: "Lengkapi berkas legalitas untuk diverifikasi oleh admin dan membuka potensi bunga pinjaman rendah.",
+      link: "/legalitas",
+      actionText: "Upload Dokumen",
+      isDone: verifiedCount >= 2,
+    },
+    {
+      id: "crowdfunding",
+      title: "Terbitkan Campaign Permodalan Pertama",
+      points: "+15 Poin",
+      desc: "Ajukan permohonan modal usaha ke jaringan kontributor setelah riwayat kas terpenuhi.",
+      link: "/crowdfunding/buat",
+      actionText: "Buat Campaign",
+      isDone: creditScore >= 60,
+    },
+  ];
 
   return (
     <div className="bg-white rounded-3xl border border-gray-100/70 shadow-sm overflow-hidden space-y-6">
@@ -18,116 +53,60 @@ export default function SkorRecommendations() {
           <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-amber-300">
             <Lightbulb className="w-4 h-4" />
           </div>
-          <h3 className="text-sm font-bold">Rekomendasi Perbaikan Skor</h3>
+          <h3 className="text-sm font-bold">Rekomendasi Perbaikan Skor Usaha</h3>
         </div>
         <span className="bg-white/10 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full border border-emerald-400/30">
-          Potensi +12 Poin
+          Potensi Hingga +65 Poin
         </span>
       </div>
 
       {/* Grid of Actionable Items */}
-      <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Item 1 */}
-        <div
-          onClick={() => toggleItem("halal")}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-3.5 ${
-            checkedItems["halal"]
-              ? "bg-[#E6F8F3] border-[#13634E]"
-              : "bg-white border-gray-200/70 hover:border-gray-300"
-          }`}
-        >
-          <input
-            type="checkbox"
-            checked={!!checkedItems["halal"]}
-            onChange={() => {}}
-            className="mt-1 w-4 h-4 text-[#13634E] rounded focus:ring-[#86E3CE]"
-          />
-          <div className="flex-1 space-y-1">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-[#0A2328]">
-                Lengkapi Sertifikasi Halal
-              </h4>
-              <span className="text-xs font-bold text-[#13634E]">+5 Poin</span>
-            </div>
-            <p className="text-[11px] text-[#556061] leading-relaxed">
-              Menambah kepercayaan investor untuk pendanaan syariah.
-            </p>
-          </div>
-        </div>
+      <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {recommendations.map((item) => {
+          const isCompleted = item.isDone || checkedItems[item.id];
 
-        {/* Item 2 */}
-        <div
-          onClick={() => toggleItem("q3")}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-3.5 ${
-            checkedItems["q3"]
-              ? "bg-[#E6F8F3] border-[#13634E]"
-              : "bg-white border-gray-200/70 hover:border-gray-300"
-          }`}
-        >
-          <input
-            type="checkbox"
-            checked={!!checkedItems["q3"]}
-            onChange={() => {}}
-            className="mt-1 w-4 h-4 text-[#13634E] rounded focus:ring-[#86E3CE]"
-          />
-          <div className="flex-1 space-y-1">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-[#0A2328]">
-                Unggah Laporan Keuangan Q3
-              </h4>
-              <span className="text-xs font-bold text-[#13634E]">+2 Poin</span>
-            </div>
-            <p className="text-[11px] text-[#556061] leading-relaxed">
-              Laporan periodik manual membantu validasi data otomatis.
-            </p>
-          </div>
-        </div>
+          return (
+            <div
+              key={item.id}
+              onClick={() => toggleItem(item.id)}
+              className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
+                isCompleted
+                  ? "bg-[#E6F8F3] border-[#13634E]"
+                  : "bg-white border-gray-200/70 hover:border-gray-300"
+              }`}
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={!!isCompleted}
+                      onChange={() => {}}
+                      className="w-4 h-4 text-[#13634E] rounded focus:ring-[#86E3CE]"
+                    />
+                    <span className="text-xs font-bold text-[#13634E]">{item.points}</span>
+                  </div>
+                  {isCompleted && (
+                    <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Selesai
+                    </span>
+                  )}
+                </div>
+                <h4 className="text-xs font-bold text-[#0A2328]">{item.title}</h4>
+                <p className="text-[11px] text-[#556061] leading-relaxed">{item.desc}</p>
+              </div>
 
-        {/* Item 3 */}
-        <div
-          onClick={() => toggleItem("bank")}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-3.5 ${
-            checkedItems["bank"]
-              ? "bg-[#E6F8F3] border-[#13634E]"
-              : "bg-white border-gray-200/70 hover:border-gray-300"
-          }`}
-        >
-          <input
-            type="checkbox"
-            checked={!!checkedItems["bank"]}
-            onChange={() => {}}
-            className="mt-1 w-4 h-4 text-[#13634E] rounded focus:ring-[#86E3CE]"
-          />
-          <div className="flex-1 space-y-1">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-[#0A2328]">
-                Hubungkan Akun Bank Utama
-              </h4>
-              <span className="text-xs font-bold text-[#13634E]">+4 Poin</span>
+              <Link
+                href={item.link}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#13634E] hover:underline pt-2 border-t border-gray-100"
+              >
+                <span>{item.actionText}</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
             </div>
-            <p className="text-[11px] text-[#556061] leading-relaxed">
-              Berikan data transaksi real-time untuk akurasi skor kas.
-            </p>
-          </div>
-        </div>
-
-        {/* Item 4: Locked/Disabled */}
-        <div className="p-4 rounded-2xl bg-[#EAE8E3]/60 border border-gray-200/50 flex items-start gap-3.5 opacity-80">
-          <div className="mt-0.5 text-gray-500">
-            <Lock className="w-4 h-4" />
-          </div>
-          <div className="flex-1 space-y-1">
-            <h4 className="text-xs font-bold text-[#0A2328]">
-              Verifikasi Identitas Lanjutan
-            </h4>
-            <p className="text-[11px] text-[#556061] leading-relaxed">
-              Beberapa aksi memerlukan verifikasi identitas lanjutan.{" "}
-              <span className="font-bold text-[#0A2328] hover:underline cursor-pointer">
-                Verifikasi Sekarang
-              </span>
-            </p>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );

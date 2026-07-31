@@ -14,17 +14,11 @@ import {
   Printer
 } from "lucide-react";
 
+import { useModava } from "@/context/modava-context";
+
 export function LegalitasHub() {
   const [activeTab, setActiveTab] = useState<"status" | "panduan" | "pajak" | "surat">("status");
-
-  // State Documents (PRD F8 Upload & Status Verification)
-  const [documents, setDocuments] = useState([
-    { id: "nib", name: "Nomor Induk Berusaha (NIB)", status: "verified", date: "12 Mei 2026", file: "NIB_WarungBerkah_2026.pdf" },
-    { id: "npwp", name: "NPWP Usaha / Perorangan", status: "verified", date: "15 Mei 2026", file: "NPWP_SriRaharju.pdf" },
-    { id: "halal", name: "Sertifikat Halal MUI / BPJPH", status: "pending", date: "22 Juli 2026", file: "Pengajuan_Sertifikat_Halal.pdf" },
-    { id: "pirt", name: "Izin P-IRT (Pangan Industri Rumah Tangga)", status: "none", date: "-", file: null },
-    { id: "tdp", name: "Tanda Daftar Perusahaan (TDP)", status: "none", date: "-", file: null },
-  ]);
+  const { legalDocs: documents, uploadLegalDoc } = useModava();
 
   // Tax Calculator State (PRD F10)
   const [monthlyTurnover, setMonthlyTurnover] = useState<number>(25000000);
@@ -52,13 +46,7 @@ export function LegalitasHub() {
   const progressPct = Math.round((verifiedCount / documents.length) * 100);
 
   const handleFileUpload = (docId: string, fileName: string) => {
-    setDocuments((prev) =>
-      prev.map((doc) =>
-        doc.id === docId
-          ? { ...doc, status: "pending", date: "Hari Ini", file: fileName }
-          : doc
-      )
-    );
+    uploadLegalDoc(docId, fileName);
     alert(`Dokumen ${fileName} berhasil diunggah! Status berubah menjadi "Menunggu Verifikasi Admin".`);
   };
 

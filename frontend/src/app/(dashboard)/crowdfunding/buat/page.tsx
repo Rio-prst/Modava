@@ -22,7 +22,7 @@ import { useModava } from "@/context/modava-context";
 function CreateCampaignForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { transactions } = useModava();
+  const { transactions, addCampaign } = useModava();
 
   // Query parameters from Loan Simulation (PRD F6 Integration)
   const initialAmount = searchParams.get("amount") || "15000000";
@@ -57,6 +57,14 @@ function CreateCampaignForm() {
       alert("Aksi ditolak: Riwayat arus kas Anda belum memenuhi syarat minimum 1 bulan (PRD F14). Silakan catat transaksi harian terlebih dahulu.");
       return;
     }
+    addCampaign({
+      title,
+      category,
+      targetAmount,
+      description,
+      fundAllocation,
+      tenor,
+    });
     alert("Campaign berhasil diterbitkan! Mengalihkan ke katalog crowdfunding...");
     router.push("/crowdfunding");
   };

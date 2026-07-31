@@ -1,21 +1,36 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { recommendedCampaigns } from "./kontributor-data";
+import { useModava } from "@/context/modava-context";
+import { recommendedCampaigns as staticRecommended } from "./kontributor-data";
 
 export default function RekomendasiCampaign() {
+  const { campaigns } = useModava();
+
+  // Combine dynamic context campaigns with static recommendations if needed
+  const displayList = campaigns.length > 0 ? campaigns.map((c) => ({
+    id: c.id,
+    title: c.title,
+    description: c.description,
+    image: c.image || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800",
+    returnRate: "15% p.a",
+    tenor: `${c.tenor || 12} Bulan`,
+  })) : staticRecommended;
+
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-bold text-[#0A2328]">
-        Rekomendasi Campaign Baru
+        Rekomendasi Campaign Permodalan UMKM
       </h2>
 
       <div className="space-y-3">
-        {recommendedCampaigns.map((rec) => (
-          <div
+        {displayList.map((rec) => (
+          <Link
             key={rec.id}
-            className="bg-white rounded-2xl p-4 border border-gray-100/70 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-4 cursor-pointer group"
+            href="/crowdfunding"
+            className="bg-white rounded-2xl p-4 border border-gray-100/70 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-4 cursor-pointer group block"
           >
             <div className="flex items-center gap-4 min-w-0">
               <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0">
@@ -50,7 +65,7 @@ export default function RekomendasiCampaign() {
             <div className="w-9 h-9 rounded-xl bg-[#052530] text-white flex items-center justify-center shrink-0 group-hover:bg-[#13634E] transition-colors">
               <ChevronRight className="w-5 h-5" />
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

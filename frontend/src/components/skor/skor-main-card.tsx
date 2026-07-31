@@ -2,9 +2,13 @@
 
 import { Download, TrendingUp } from "lucide-react";
 
+import { useModava } from "@/context/modava-context";
+
 export default function SkorMainCard() {
-  const score = 82;
+  const { creditScore, creditScoreTier } = useModava();
+  const score = creditScore;
   const angle = (score / 100) * 180;
+  const labelTier = creditScoreTier;
 
   return (
     <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100/70 shadow-sm flex flex-col lg:flex-row items-center gap-8 justify-between">
@@ -48,7 +52,7 @@ export default function SkorMainCard() {
               letterSpacing="1"
               fontFamily="Plus Jakarta Sans, sans-serif"
             >
-              TINGGI
+              {labelTier}
             </text>
           </svg>
         </div>

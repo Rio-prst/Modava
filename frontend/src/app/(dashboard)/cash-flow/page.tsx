@@ -6,24 +6,21 @@ import CashFlowMetrics from "@/components/cash-flow/cash-flow-metrics";
 import TransactionTable from "@/components/cash-flow/transaction-table";
 import TransactionModal from "@/components/cash-flow/transaction-modal";
 import GrafikCashFlowView from "@/components/cash-flow/grafik-cash-flow-view";
-import { initialTransactions, Transaction } from "@/components/cash-flow/cash-flow-data";
+import { Transaction } from "@/components/cash-flow/cash-flow-data";
+import { useModava } from "@/context/modava-context";
 
 export default function CashFlowPage() {
   const [activeTab, setActiveTab] = useState<"list" | "grafik">("list");
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const { transactions, addTransaction, deleteTransaction } = useModava();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalDefaultType, setModalDefaultType] = useState<"in" | "out">("in");
 
   const handleAddTransaction = (newTx: Omit<Transaction, "id">) => {
-    const created: Transaction = {
-      ...newTx,
-      id: `tx-${Date.now()}`,
-    };
-    setTransactions((prev) => [created, ...prev]);
+    addTransaction(newTx);
   };
 
   const handleDeleteTransaction = (id: string) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
+    deleteTransaction(id);
   };
 
   const openModal = (type: "in" | "out") => {

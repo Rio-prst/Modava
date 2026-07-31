@@ -1,17 +1,20 @@
 "use client";
 
 import { Bell, Search } from "lucide-react";
-import { kontributorSummary } from "./kontributor-data";
+import { useUser } from "@clerk/nextjs";
 
 export default function KontributorHeader() {
+  const { user } = useUser();
+  const userName = user?.firstName || user?.fullName || "Kontributor Modava";
+
   return (
     <div className="flex items-center justify-between gap-4">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-[#0A2328]">
-          Selamat Pagi, {kontributorSummary.userName.split(" ")[0]}
+          Selamat Datang, {userName} 👋
         </h1>
         <p className="text-sm text-[#556061] mt-1">
-          Lihat perkembangan kontribusi UMKM Anda hari ini.
+          Lihat perkembangan kontribusi modal UMKM Anda hari ini.
         </p>
       </div>
 

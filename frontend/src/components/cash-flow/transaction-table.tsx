@@ -18,9 +18,10 @@ export default function TransactionTable({
 
   const filtered = transactions.filter((t) => {
     const matchesType = filterType === "all" || t.type === filterType;
-    const matchesSearch =
-      t.description.toLowerCase().includes(search.toLowerCase()) ||
-      t.category.toLowerCase().includes(search.toLowerCase());
+    const desc = (t.description || t.note || "").toLowerCase();
+    const cat = (t.category || "").toLowerCase();
+    const q = search.toLowerCase();
+    const matchesSearch = desc.includes(q) || cat.includes(q);
     return matchesType && matchesSearch;
   });
 
@@ -115,8 +116,8 @@ export default function TransactionTable({
                     })}
                   </td>
                   <td className="py-3.5 px-4">
-                    <p className="font-bold text-[#0A2328]">{tx.description}</p>
-                    <p className="text-[11px] text-[#556061]">{tx.category}</p>
+                    <p className="font-bold text-[#0A2328]">{tx.description || tx.note || "Transaksi Usaha"}</p>
+                    <p className="text-[11px] text-[#556061]">{tx.category || "Umum"}</p>
                   </td>
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     {tx.type === "in" ? (

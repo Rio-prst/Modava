@@ -1,10 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { skorData } from "./dashboard-data";
+import { useModava } from "@/context/modava-context";
 
 export default function WidgetSkor() {
-  const { score, label, description } = skorData;
+  const { creditScore, creditScoreTier } = useModava();
+  const score = creditScore;
+  const label = creditScoreTier.toUpperCase();
   const angle = (score / 100) * 180;
+  const description = `Skor keuangan Anda saat ini adalah ${score} (${creditScoreTier}). Berpeluang mendapatkan bunga crowdfunding yang lebih rendah.`;
 
   return (
     <div className="bg-white rounded-2xl p-6 flex flex-col items-center justify-between h-full min-h-[300px] border border-gray-100/50 shadow-sm space-y-4">

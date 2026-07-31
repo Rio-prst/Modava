@@ -1,14 +1,28 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { legalitasData } from "./dashboard-data";
+import { useModava } from "@/context/modava-context";
 
 const statusStyles: Record<string, { bg: string; text: string }> = {
+  verified: { bg: "#DCFCE7", text: "#166534" },
+  pending: { bg: "#FEF3C7", text: "#B45309" },
+  none: { bg: "#F3F4F6", text: "#6B7280" },
   Terverifikasi: { bg: "#DCFCE7", text: "#166534" },
   "Dalam Proses": { bg: "#FEF3C7", text: "#B45309" },
   "Belum Ada": { bg: "#F3F4F6", text: "#6B7280" },
 };
 
+const statusLabels: Record<string, string> = {
+  verified: "Terverifikasi",
+  pending: "Dalam Proses",
+  none: "Belum Ada",
+};
+
 export default function WidgetLegalitas() {
+  const { legalDocs } = useModava();
+  const displayDocs = legalDocs.slice(0, 3);
+
   return (
     <div className="bg-white rounded-2xl p-5 space-y-3.5 border border-gray-100/50 shadow-sm flex flex-col justify-between">
       <div className="flex items-center justify-between">
@@ -24,21 +38,22 @@ export default function WidgetLegalitas() {
         </Link>
       </div>
       <div className="space-y-3">
-        {legalitasData.map((item) => {
-          const style = statusStyles[item.status] || statusStyles["Belum Ada"];
+        {displayDocs.map((item) => {
+          const style = statusStyles[item.status] || statusStyles["none"];
+          const labelText = statusLabels[item.status] || item.status;
           return (
             <div
-              key={item.label}
+              key={item.id}
               className="flex items-center justify-between"
             >
               <span className="text-[13px] font-medium text-[#0A2328]">
-                {item.label}
+                {item.name}
               </span>
               <span
                 className="text-[11px] font-semibold rounded-full px-3 py-1"
                 style={{ backgroundColor: style.bg, color: style.text }}
               >
-                {item.status}
+                {labelText}
               </span>
             </div>
           );

@@ -38,7 +38,16 @@ export async function apiFetch<T>(
       throw new Error(`HTTP ${res.status}: ${res.statusText}`);
     }
 
-    const json = await res.json();
+    const text = await res.text();
+    let json: any = {};
+    if (text && text.trim().length > 0) {
+      try {
+        json = JSON.parse(text);
+      } catch {
+        json = { data: text };
+      }
+    }
+
     const data = json.data !== undefined ? json.data : json;
     return { success: true, data };
   } catch (error) {
@@ -91,6 +100,16 @@ export async function fetchPublicCampaigns(filters?: Record<string, string>) {
 
 export async function fetchPublicCampaignById(id: string) {
   return apiFetch<Record<string, unknown>>(`/campaigns/public/${id}`, { method: "GET" });
+}
+
+export async function createCampaign(
+  payload: { title: string; fundingGoal: number; durationDays?: number; description?: string },
+  token?: string | null
+) {
+  return apiFetch<Record<string, unknown>>("/campaigns", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  }, token);
 }
 
 // Legalitas API

@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useAuth, useClerk } from "@clerk/nextjs";
+import { useModava } from "@/context/modava-context";
 import { 
   ArrowLeft, 
   ShieldCheck, 
@@ -15,33 +18,45 @@ import {
   MapPin, 
   X,
   CreditCard,
-  QrCode
+  QrCode,
+  Lock,
+  HeartHandshake
 } from "lucide-react";
 
 export default function CampaignDetailPage() {
+  const params = useParams();
+  const campaignId = params.id as string;
+
+  const { isSignedIn } = useAuth();
+  const { openSignIn } = useClerk();
+  const { campaigns, addContribution, walletBalance } = useModava();
+
   const [activeTab, setActiveTab] = useState<"detail" | "laporan">("detail");
   const [isPledgeModalOpen, setIsPledgeModalOpen] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [pledgeAmount, setPledgeAmount] = useState<number>(100000);
   const [paymentMethod, setPaymentMethod] = useState<"qris" | "va">("qris");
   const [pledgeSuccess, setPledgeSuccess] = useState(false);
 
-  // Mock Campaign Data
+  // Find matching campaign from context or fallback
+  const foundCampaign = campaigns.find((c) => c.id === campaignId);
+
   const campaign = {
-    id: "c-1",
-    title: "Pengadaan Mesin Penggiling & Kemasan Kopi Organik",
-    umkmName: "Kopi Gayo Organik - Pak Budi",
+    id: foundCampaign?.id || campaignId || "c-1",
+    title: foundCampaign?.title || "Pengadaan Mesin Penggiling & Kemasan Kopi Organik",
+    umkmName: "Warung Berkah / Kopi Gayo Organik",
     location: "Takengon, Aceh Tengah",
-    category: "Kuliner & Olahan Makanan",
+    category: foundCampaign?.category || "Kuliner & Olahan Makanan",
     verified: true,
-    score: 82, // Skor kelayakan 82 (A - Sangat Layak)
+    score: 82,
     scoreTier: "A (Sangat Layak)",
-    target: 15000000,
-    collected: 12750000,
+    target: foundCampaign?.targetAmount || 15000000,
+    collected: foundCampaign?.currentAmount || 12750000,
     donorCount: 34,
-    daysLeft: 12,
-    tenor: 6,
+    daysLeft: foundCampaign?.daysLeft || 12,
+    tenor: foundCampaign?.tenor || 6,
     returnRate: "8.5% p.a.",
-    description: `Usaha Kopi Gayo Organik kami telah berdiri sejak 2021 dan telah mengantongi sertifikat NIB, NPWP, serta Sertifikat Halal MUI. Untuk memenuhi peningkatan pesanan ekspor dari kafe mitra di Medan dan Jakarta, kami membutuhkan tambahan modal usaha guna membeli mesin roaster penggiling skala medium kapasitas 50kg/jam.`,
+    description: foundCampaign?.description || `Usaha Kopi Gayo Organik kami telah berdiri sejak 2021 dan telah mengantongi sertifikat NIB, NPWP, serta Sertifikat Halal MUI. Untuk memenuhi peningkatan pesanan ekspor dari kafe mitra di Medan dan Jakarta, kami membutuhkan tambahan modal usaha guna membeli mesin roaster penggiling skala medium kapasitas 50kg/jam.`,
     allocation: [
       { item: "Mesin Roaster Penggiling 50kg/jam", pct: "70%", val: "Rp 10.500.000" },
       { item: "Stok Biji Kopi Mentah Grade-A", pct: "20%", val: "Rp 3.000.000" },
@@ -63,10 +78,24 @@ export default function CampaignDetailPage() {
     ]
   };
 
-  const progressPct = Math.min(Math.round((campaign.collected / campaign.target) * 100), 100);
+  const [currentCollected, setCurrentCollected] = useState<number>(campaign.collected);
+  const progressPct = Math.min(Math.round((currentCollected / campaign.target) * 100), 100);
+
+  const handlePledgeClick = () => {
+    if (!isSignedIn) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    setPledgeSuccess(false);
+    setIsPledgeModalOpen(true);
+  };
 
   const handlePledgeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (pledgeAmount <= 0) return;
+
+    addContribution(campaign.id, campaign.title, campaign.category, pledgeAmount);
+    setCurrentCollected((prev) => prev + pledgeAmount);
     setPledgeSuccess(true);
   };
 
@@ -76,7 +105,7 @@ export default function CampaignDetailPage() {
       <div className="flex items-center justify-between">
         <Link 
           href="/crowdfunding"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-modava-primary transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-[#13634E] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Kembali ke Katalog Campaign
         </Link>
@@ -90,14 +119,14 @@ export default function CampaignDetailPage() {
         </div>
       </div>
 
-      {/* Main Grid: Left Details, Right Funding Sidebar */}
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Image, Details, Score & Tabs */}
+        {/* Left Column */}
         <div className="lg:col-span-8 space-y-6">
           {/* Gallery Header Image */}
           <div className="relative rounded-3xl overflow-hidden shadow-lg border border-slate-200/80 bg-slate-900 group">
             <img 
-              src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1200&auto=format&fit=crop"
+              src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1200&auto=format&fit=crop"
               alt={campaign.title}
               className="w-full h-72 sm:h-96 object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
             />
@@ -121,7 +150,7 @@ export default function CampaignDetailPage() {
           </div>
 
           {/* Skor Kelayakan UMKM Card */}
-          <div className="bg-gradient-to-br from-emerald-950 via-modava-primary-dark to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl space-y-6 border border-emerald-800/40">
+          <div className="bg-gradient-to-br from-emerald-950 via-[#052530] to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl space-y-6 border border-emerald-800/40">
             <div className="flex items-center justify-between border-b border-emerald-800/50 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-400/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 font-extrabold text-lg">
@@ -160,9 +189,9 @@ export default function CampaignDetailPage() {
             <div className="flex border-b border-slate-200 gap-6">
               <button
                 onClick={() => setActiveTab("detail")}
-                className={`pb-3 text-sm font-bold transition-colors border-b-2 ${
+                className={`pb-3 text-sm font-bold transition-colors border-b-2 cursor-pointer ${
                   activeTab === "detail"
-                    ? "border-modava-primary text-modava-primary"
+                    ? "border-[#13634E] text-[#13634E]"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
@@ -170,9 +199,9 @@ export default function CampaignDetailPage() {
               </button>
               <button
                 onClick={() => setActiveTab("laporan")}
-                className={`pb-3 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 ${
+                className={`pb-3 text-sm font-bold transition-colors border-b-2 flex items-center gap-2 cursor-pointer ${
                   activeTab === "laporan"
-                    ? "border-modava-primary text-modava-primary"
+                    ? "border-[#13634E] text-[#13634E]"
                     : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
               >
@@ -183,7 +212,7 @@ export default function CampaignDetailPage() {
               </button>
             </div>
 
-            {/* Tab 1: Description & Allocation */}
+            {/* Tab 1 */}
             {activeTab === "detail" && (
               <div className="space-y-6 text-slate-700 text-sm leading-relaxed">
                 <div>
@@ -208,14 +237,14 @@ export default function CampaignDetailPage() {
               </div>
             )}
 
-            {/* Tab 2: Progress Reports */}
+            {/* Tab 2 */}
             {activeTab === "laporan" && (
               <div className="space-y-4">
                 <h4 className="font-bold text-slate-900 text-base">Laporan Penggunaan Dana dari UMKM</h4>
                 <div className="space-y-4 relative before:absolute before:left-4 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200">
                   {campaign.progressReports.map((report, idx) => (
                     <div key={idx} className="relative pl-10 space-y-1">
-                      <div className="absolute left-2 top-1.5 w-4 h-4 rounded-full bg-modava-primary border-4 border-white shadow" />
+                      <div className="absolute left-2 top-1.5 w-4 h-4 rounded-full bg-[#13634E] border-4 border-white shadow" />
                       <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-1">
                         <div className="flex items-center justify-between text-xs text-slate-500">
                           <span className="font-bold text-emerald-700">{report.author}</span>
@@ -232,14 +261,14 @@ export default function CampaignDetailPage() {
           </div>
         </div>
 
-        {/* Right Column: Funding Card Sidebar */}
+        {/* Right Column Sidebar */}
         <div className="lg:col-span-4 space-y-6 sticky top-6">
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-md space-y-6">
             {/* Target & Progress Metric */}
             <div className="space-y-3">
               <div className="flex justify-between items-baseline">
-                <span className="text-2xl sm:text-3xl font-extrabold text-modava-primary">
-                  Rp {campaign.collected.toLocaleString("id-ID")}
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#13634E]">
+                  Rp {currentCollected.toLocaleString("id-ID")}
                 </span>
                 <span className="text-xs font-extrabold px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full">
                   {progressPct}% Terkumpul
@@ -252,7 +281,7 @@ export default function CampaignDetailPage() {
               {/* Progress Bar */}
               <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-modava-primary to-emerald-400 rounded-full transition-all duration-700" 
+                  className="h-full bg-[#13634E] rounded-full transition-all duration-700" 
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
@@ -290,13 +319,10 @@ export default function CampaignDetailPage() {
 
             {/* Action Pledge Button */}
             <button
-              onClick={() => {
-                setPledgeSuccess(false);
-                setIsPledgeModalOpen(true);
-              }}
-              className="w-full py-4 bg-modava-primary hover:bg-emerald-800 text-white rounded-2xl font-bold text-base shadow-lg shadow-emerald-700/25 transition-all flex items-center justify-center gap-2"
+              onClick={handlePledgeClick}
+              className="w-full py-4 bg-[#13634E] hover:bg-[#0e4b3b] text-white rounded-2xl font-bold text-base shadow-lg shadow-emerald-700/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Heart className="w-5 h-5 fill-white" /> Beri Kontribusi Modal
+              <HeartHandshake className="w-5 h-5" /> Beri Kontribusi Modal
             </button>
             <p className="text-[11px] text-center text-slate-400">
               🔒 Transaksi aman & disimulasikan sesuai regulasi platform Modava.
@@ -304,6 +330,41 @@ export default function CampaignDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* LOGIN PROMPT MODAL */}
+      {showLoginPrompt && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-gray-100 text-center space-y-5 animate-in fade-in zoom-in duration-200">
+            <div className="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+              <Lock className="w-7 h-7" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-bold text-[#0A2328]">Login Diperlukan untuk Memberikan Modal</h3>
+              <p className="text-xs text-[#556061] leading-relaxed">
+                Anda harus masuk (login) ke akun Modava terlebih dahulu sebelum menyalurkan dukungan modal usaha atau pledge ke campaign ini.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2.5 pt-2">
+              <button
+                onClick={() => {
+                  setShowLoginPrompt(false);
+                  if (openSignIn) openSignIn();
+                  else window.location.href = "/masuk";
+                }}
+                className="w-full py-3 bg-[#13634E] hover:bg-[#0e4b3b] text-white text-xs font-bold rounded-2xl transition shadow-md cursor-pointer"
+              >
+                Masuk / Daftar Sekarang
+              </button>
+              <button
+                onClick={() => setShowLoginPrompt(false)}
+                className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-2xl transition cursor-pointer"
+              >
+                Nanti Saja
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pledge Modal */}
       {isPledgeModalOpen && (
@@ -320,21 +381,21 @@ export default function CampaignDetailPage() {
               <form onSubmit={handlePledgeSubmit} className="space-y-6">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900">Beri Kontribusi Modal</h3>
-                  <p className="text-xs text-slate-500 mt-1">Dukung pengadaan mesin kopi UMKM Pak Budi</p>
+                  <p className="text-xs text-slate-500 mt-1">Dukung pengadaan modal UMKM {campaign.umkmName}</p>
                 </div>
 
                 {/* Preset Amounts */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-700">Pilih Nominal Dukungan</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {[50000, 100000, 500000].map((amt) => (
+                    {[100000, 500000, 1000000].map((amt) => (
                       <button
                         key={amt}
                         type="button"
                         onClick={() => setPledgeAmount(amt)}
                         className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
                           pledgeAmount === amt
-                            ? "bg-modava-primary text-white border-modava-primary"
+                            ? "bg-[#13634E] text-white border-[#13634E]"
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
@@ -353,14 +414,14 @@ export default function CampaignDetailPage() {
                       type="text"
                       value={pledgeAmount.toLocaleString("id-ID")}
                       onChange={(e) => setPledgeAmount(Number(e.target.value.replace(/\D/g, "")) || 0)}
-                      className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-modava-primary/30 focus:outline-none"
+                      className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-[#13634E]/30 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 {/* Payment Method */}
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-700">Metode Pembayaran (Simulasi)</label>
+                  <label className="text-xs font-bold text-slate-700">Metode Pembayaran</label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
@@ -389,7 +450,7 @@ export default function CampaignDetailPage() {
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-modava-primary hover:bg-emerald-800 text-white font-bold rounded-2xl text-sm shadow-md shadow-emerald-700/20"
+                  className="w-full py-3.5 bg-[#13634E] hover:bg-[#0e4b3b] text-white font-bold rounded-2xl text-sm shadow-md shadow-emerald-700/20 cursor-pointer"
                 >
                   Konfirmasi Kontribusi Rp {pledgeAmount.toLocaleString("id-ID")}
                 </button>
@@ -406,7 +467,7 @@ export default function CampaignDetailPage() {
                 </p>
                 <button
                   onClick={() => setIsPledgeModalOpen(false)}
-                  className="w-full py-3 bg-modava-primary text-white rounded-2xl font-bold text-sm"
+                  className="w-full py-3 bg-[#13634E] text-white rounded-2xl font-bold text-sm cursor-pointer"
                 >
                   Tutup
                 </button>
