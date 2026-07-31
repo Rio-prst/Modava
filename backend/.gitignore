@@ -1,0 +1,50 @@
+# Dependencies
+/node_modules
+
+# Build
+/dist
+
+# Coverage
+/coverage
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.development
+.env.production
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+tmp
+temp
+
+# Runtime
+*.pid
+*.seed
+*.pid.lock
+
+# Docker
+.docker
+
+# Generated
+*.tsbuildinfo
+/generated/prisma

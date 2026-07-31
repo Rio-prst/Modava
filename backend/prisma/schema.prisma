@@ -1,0 +1,312 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  UMKM
+  CONTRIBUTOR
+  ADMIN
+}
+
+enum DocumentType {
+  NIB
+  NPWP
+  IUMK
+  SERTIFIKAT_HALAL
+  TDP
+}
+
+enum DocumentStatus {
+  SUBMITTED
+  VERIFIED
+  REJECTED
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  FUNDED
+  CLOSED
+}
+
+enum NotificationType {
+  PLEDGE_NEW
+  PLEDGE_VERIFIED
+  PLEDGE_REJECTED
+  TARGET_REACHED
+  CAMPAIGN_ENDED
+  LEGALITAS_VERIFIED
+  LEGALITAS_REJECTED
+  SCORE_UPDATED
+}
+
+enum PledgeStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum MediaType {
+  IMAGE
+  DOCUMENT
+}
+
+enum FundUsageStatus {
+  PLANNED
+  SPENT
+}
+
+model User {
+  id          String   @id @default(uuid())
+  clerkUserId String   @unique
+  email       String   @unique
+  name        String?
+  avatarUrl   String?
+  role        UserRole @default(UMKM)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  umkmProfile       UMKMProfile?
+  pledges           Pledge[]
+  verifiedPledges   Pledge[] @relation("VerifiedPledges")
+  notifications     Notification[]
+  verifiedDocuments LegalitasDocument[] @relation("DocumentVerifier")
+}
+
+model BusinessCategory {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  umkmProfiles UMKMProfile[]
+}
+
+model UMKMProfile {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName String
+  description  String?
+  categoryId   String?
+  category     BusinessCategory? @relation(fields: [categoryId], references: [id])
+  address      String?
+  city         String?
+  province     String?
+  postalCode   String?
+  phoneNumber  String?
+  nibNumber    String?
+  npwpNumber   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  legalitasDocuments   LegalitasDocument[]
+  cashFlowTransactions CashFlowTransaction[]
+  cashFlowSummaries    CashFlowMonthlySummary[]
+  creditScores         CreditScore[]
+  campaigns            Campaign[]
+  loanSimulations      LoanSimulation[]
+
+  @@index([categoryId])
+  @@index([city])
+  @@index([province])
+}
+
+model LegalitasGuide {
+  id           String       @id @default(uuid())
+  documentType DocumentType @unique
+  title        String
+  content      String
+  steps        Json?
+  order        Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model LegalitasDocument {
+  id            String         @id @default(uuid())
+  umkmProfileId String
+  umkmProfile   UMKMProfile    @relation(fields: [umkmProfileId], references: [id], onDelete: Cascade)
+  documentType  DocumentType
+  status        DocumentStatus @default(SUBMITTED)
+  fileUrl       String
+  fileName      String
+  notes         String?
+  verifiedById  String?
+  verifiedBy    User?          @relation("DocumentVerifier", fields: [verifiedById], references: [id])
+  submittedAt   DateTime       @default(now())
+  verifiedAt    DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([umkmProfileId, documentType])
+  @@index([umkmProfileId])
+  @@index([status])
+  @@index([verifiedById])
+}
+
+model CashFlowTransaction {
+  id              String          @id @default(uuid())
+  umkmProfileId   String
+  umkmProfile     UMKMProfile     @relation(fields: [umkmProfileId], references: [id], onDelete: Cascade)
+  type            TransactionType
+  amount          Decimal         @db.Decimal(15, 2)
+  description     String
+  category        String?
+  transactionDate DateTime
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([umkmProfileId, transactionDate])
+  @@index([umkmProfileId, type])
+}
+
+model CashFlowMonthlySummary {
+  id               String   @id @default(uuid())
+  umkmProfileId    String
+  umkmProfile      UMKMProfile @relation(fields: [umkmProfileId], references: [id], onDelete: Cascade)
+  month            Int
+  year             Int
+  totalIncome      Decimal  @default(0) @db.Decimal(15, 2)
+  totalExpense     Decimal  @default(0) @db.Decimal(15, 2)
+  netProfit        Decimal  @default(0) @db.Decimal(15, 2)
+  transactionCount Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([umkmProfileId, month, year])
+  @@index([umkmProfileId])
+}
+
+model CreditScore {
+  id                   String   @id @default(uuid())
+  umkmProfileId        String
+  umkmProfile          UMKMProfile @relation(fields: [umkmProfileId], references: [id], onDelete: Cascade)
+  overallScore         Float
+  cashFlowScore        Float
+  legalitasScore       Float
+  platformHistoryScore Float
+  tier                 String
+  breakdown            Json?
+  calculatedAt         DateTime @default(now())
+  createdAt            DateTime @default(now())
+
+  @@index([umkmProfileId])
+  @@index([overallScore])
+}
+
+model LoanSimulation {
+  id             String   @id @default(uuid())
+  umkmProfileId  String
+  umkmProfile    UMKMProfile @relation(fields: [umkmProfileId], references: [id], onDelete: Cascade)
+  amount         Decimal  @db.Decimal(15, 2)
+  tenor          Int
+  interestRate   Float    @default(0.5)
+  monthlyPayment Decimal  @db.Decimal(15, 2)
+  totalPayment   Decimal  @db.Decimal(15, 2)
+  totalInterest  Decimal  @db.Decimal(15, 2)
+  createdAt      DateTime @default(now())
+
+  campaign Campaign?
+
+  @@index([umkmProfileId])
+}
+
+model Campaign {
+  id                String         @id @default(uuid())
+  umkmProfileId     String
+  umkmProfile       UMKMProfile    @relation(fields: [umkmProfileId], references: [id], onDelete: Cascade)
+  title             String
+  description       String
+  fundingGoal       Decimal        @db.Decimal(15, 2)
+  amountRaised      Decimal        @default(0) @db.Decimal(15, 2)
+  status            CampaignStatus @default(DRAFT)
+  startDate         DateTime?
+  endDate           DateTime?
+  loanSimulationId  String?        @unique
+  loanSimulation    LoanSimulation? @relation(fields: [loanSimulationId], references: [id])
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  pledges          Pledge[]
+  media            CampaignMedia[]
+  fundUsageReports FundUsageReport[]
+
+  @@index([umkmProfileId])
+  @@index([status])
+}
+
+model CampaignMedia {
+  id         String    @id @default(uuid())
+  campaignId String
+  campaign   Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  fileUrl    String
+  fileType   MediaType
+  isPrimary  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  @@index([campaignId])
+}
+
+model FundUsageReport {
+  id          String          @id @default(uuid())
+  campaignId  String
+  campaign    Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  description String
+  amount      Decimal         @db.Decimal(15, 2)
+  status      FundUsageStatus @default(PLANNED)
+  notes       String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([campaignId])
+}
+
+model Pledge {
+  id           String       @id @default(uuid())
+  campaignId   String
+  campaign     Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User         @relation(fields: [userId], references: [id])
+  amount       Decimal      @db.Decimal(15, 2)
+  message      String?
+  status       PledgeStatus @default(PENDING)
+  proofUrl     String?
+  rejectReason String?
+  verifiedById String?
+  verifiedAt   DateTime?
+  verifiedBy   User?        @relation("VerifiedPledges", fields: [verifiedById], references: [id])
+  createdAt    DateTime     @default(now())
+
+  @@index([campaignId])
+  @@index([userId])
+  @@index([status])
+}
+
+model Notification {
+  id             String           @id @default(uuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type           NotificationType
+  title          String
+  message        String?
+  isRead         Boolean          @default(false)
+  referenceId    String?
+  referenceType  String?
+  createdAt      DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+}
