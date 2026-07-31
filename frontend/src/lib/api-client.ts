@@ -185,6 +185,28 @@ export async function updateUmkmProfileApi(payload: Record<string, unknown>, tok
   }, token);
 }
 
+export interface ModavaUser {
+  id: string;
+  clerkUserId: string;
+  email: string;
+  name: string | null;
+  avatarUrl: string | null;
+  role: "ADMIN" | "CONTRIBUTOR" | "UMKM";
+}
+
+// User API
+export async function syncMe(token?: string | null) {
+  return apiFetch<ModavaUser>("/users/sync", { method: "POST" }, token);
+}
+
+export async function getMe(token?: string | null) {
+  const res = await apiFetch<ModavaUser>("/users/me", { method: "GET" }, token);
+  if (!res.success) {
+    return null;
+  }
+  return res.data ?? null;
+}
+
 /**
  * Mock Data Fallback Generator for demo reliability
  */

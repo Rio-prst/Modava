@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Lock } from "lucide-react";
+import { AdminGate } from "@/components/admin/admin-gate";
 
 export const metadata: Metadata = {
   title: "Admin Panel - Verifikasi Legalitas & Transaksi | Modava",
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
+    <AdminGate>
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
       {/* Top Admin Security Navigation Bar */}
       <header className="bg-slate-950 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
@@ -32,5 +34,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {children}
       </main>
     </div>
+    </AdminGate>
   );
 }
