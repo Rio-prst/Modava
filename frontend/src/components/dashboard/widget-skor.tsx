@@ -40,22 +40,22 @@ export default function WidgetSkor() {
           />
           <text
             x="100"
-            y="70"
+            y="68"
             textAnchor="middle"
             fill="#0A2328"
-            fontSize="32"
-            fontWeight="700"
+            fontSize="30"
+            fontWeight="800"
             fontFamily="Plus Jakarta Sans, sans-serif"
           >
             {score}
           </text>
           <text
             x="100"
-            y="92"
+            y="96"
             textAnchor="middle"
-            fill="#0A2328"
-            fontSize="12"
-            fontWeight="700"
+            fill="#13634E"
+            fontSize="8.5"
+            fontWeight="800"
             letterSpacing="0.5"
             fontFamily="Plus Jakarta Sans, sans-serif"
           >

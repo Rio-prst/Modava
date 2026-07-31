@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Building2, 
   User, 
@@ -8,25 +8,22 @@ import {
   Camera, 
   CheckCircle2
 } from "lucide-react";
+import { useModava } from "@/context/modava-context";
 
 export default function ProfilPage() {
-  const [profile, setProfile] = useState({
-    namaUsaha: "Warung Berkah Sembako & Katering",
-    kategori: "Kuliner & Olahan Makanan",
-    tahunBerdiri: "2021",
-    namaPemilik: "Sri Rahayu",
-    nik: "3273015509820003",
-    email: "warungberkah.bdg@gmail.com",
-    telepon: "+62 812-3456-7890",
-    alamat: "Jl. Merdeka No. 45, Kecamatan Coblong, Kota Bandung, Jawa Barat 40132",
-    deskripsi: "Usaha warung sembako dan penyedia jasa katering rumahan yang melayani kebutuhan konsumsi harian masyarakat sekitar dan acara skala menengah.",
-    logoUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=300&auto=format&fit=crop",
-  });
-
+  const { umkmProfile, updateUmkmProfile } = useModava();
+  const [profile, setProfile] = useState(umkmProfile);
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  useEffect(() => {
+    if (umkmProfile) {
+      setProfile(umkmProfile);
+    }
+  }, [umkmProfile]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    updateUmkmProfile(profile);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
@@ -48,7 +45,7 @@ export default function ProfilPage() {
           </div>
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-400/20 text-emerald-200 text-xs font-bold rounded-full border border-emerald-400/30 mb-1">
-              <Building2 className="w-3.5 h-3.5" /> Profil Usaha Terdaftar PRD [F2]
+              <Building2 className="w-3.5 h-3.5" /> Profil Usaha Terdaftar
             </div>
             <h1 className="text-2xl font-extrabold">{profile.namaUsaha}</h1>
             <p className="text-xs text-emerald-100/90 flex items-center gap-2 mt-1">

@@ -5,8 +5,24 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { useModava } from "@/context/modava-context";
 
-export default function CampaignDidukung() {
+interface CampaignDidukungProps {
+  searchQuery?: string;
+}
+
+export default function CampaignDidukung({ searchQuery = "" }: CampaignDidukungProps) {
   const { contributions } = useModava();
+
+  // Only show actual crowdfunding campaign pledges (exclude deposit & withdraw wallet movements)
+  const pledgeContributions = contributions.filter(
+    (c) => c.type === "pledge" || (c.campaignId && c.type !== "deposit" && c.type !== "withdraw")
+  );
+
+  const filteredContributions = searchQuery.trim()
+    ? pledgeContributions.filter((c) =>
+        c.campaignTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : pledgeContributions;
 
   return (
     <div className="space-y-4">
@@ -22,10 +38,12 @@ export default function CampaignDidukung() {
         </Link>
       </div>
 
-      {contributions.length === 0 ? (
+      {filteredContributions.length === 0 ? (
         <div className="bg-white rounded-2xl p-6 border border-gray-100/70 shadow-sm text-center space-y-3">
           <p className="text-sm font-semibold text-[#0A2328]">
-            Anda belum mendukung campaign permodal UMKM manapun.
+            {searchQuery.trim()
+              ? `Tidak ada campaign didukung cocok dengan "${searchQuery}".`
+              : "Anda belum mendukung campaign permodal UMKM manapun."}
           </p>
           <p className="text-xs text-[#556061]">
             Jelajahi campaign aktif dan dukung pertumbuhan UMKM lokal sekarang.
@@ -40,7 +58,7 @@ export default function CampaignDidukung() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {contributions.map((camp) => {
+          {filteredContributions.map((camp) => {
             const progress = camp.progress || 50;
             const daysLeft = camp.daysLeft || 30;
             const target = camp.target || 50000000;

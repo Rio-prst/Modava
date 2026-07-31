@@ -1,10 +1,9 @@
 import { Metadata } from "next";
-import Link from "next/link";
-import { ArrowLeft, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Admin Panel - Verifikasi Legalitas | Modava",
-  description: "Portal Khusus Admin Modava untuk peninjauan dan verifikasi dokumen legalitas UMKM.",
+  title: "Admin Panel - Verifikasi Legalitas & Transaksi | Modava",
+  description: "Portal Khusus Admin Modava untuk peninjauan legalitas dan ACC deposit/withdraw.",
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -23,16 +22,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 Internal Only
               </span>
             </h1>
-            <p className="text-xs text-slate-400">Verifikasi Dokumen Legalitas & Peninjauan UMKM</p>
+            <p className="text-xs text-slate-400">Verifikasi Dokumen Legalitas UMKM & ACC Deposit / Withdraw</p>
           </div>
         </div>
-
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition px-3 py-2 rounded-xl bg-slate-800 border border-slate-700"
-        >
-          <ArrowLeft className="w-4 h-4" /> Keluar dari Mode Admin
-        </Link>
       </header>
 
       {/* Admin Content Area */}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import KontributorHeader from "@/components/kontributor/kontributor-header";
@@ -9,6 +10,8 @@ import RekomendasiCampaign from "@/components/kontributor/rekomendasi-campaign";
 import RiwayatKontributor from "@/components/kontributor/riwayat-kontributor";
 
 export default function KontributorDashboardPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto relative pb-12">
       {/* Role Switcher Pill Bar */}
@@ -27,7 +30,10 @@ export default function KontributorDashboardPage() {
       </div>
 
       {/* Header */}
-      <KontributorHeader />
+      <KontributorHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
       {/* Hero Banner: Total Kontribusi */}
       <KontributorHeroCard />
@@ -36,8 +42,8 @@ export default function KontributorDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Section (8 cols) */}
         <div className="lg:col-span-8 space-y-6">
-          <CampaignDidukung />
-          <RekomendasiCampaign />
+          <CampaignDidukung searchQuery={searchQuery} />
+          <RekomendasiCampaign searchQuery={searchQuery} />
         </div>
 
         {/* Right Section (4 cols): Riwayat Terakhir */}

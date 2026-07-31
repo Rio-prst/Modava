@@ -50,10 +50,24 @@ export interface Contribution {
   date: string;
   type: "pledge" | "return" | "deposit" | "withdraw";
   status: string;
+  proofUrl?: string;
   image?: string;
   target?: number;
   progress?: number;
   daysLeft?: number;
+}
+
+export interface UmkmProfile {
+  namaUsaha: string;
+  kategori: string;
+  tahunBerdiri: string;
+  namaPemilik: string;
+  nik: string;
+  email: string;
+  telepon: string;
+  alamat: string;
+  deskripsi: string;
+  logoUrl?: string;
 }
 
 interface ModavaContextType {
@@ -75,8 +89,14 @@ interface ModavaContextType {
   totalContributionAmount: number;
 
   walletBalance: number;
-  depositWallet: (amount: number, method: string) => void;
+  depositWallet: (amount: number, method: string, proofUrl?: string) => void;
   withdrawWallet: (amount: number, bank: string, accountNum: string) => boolean;
+
+  approveTransaction: (id: string) => void;
+  rejectTransaction: (id: string) => void;
+
+  umkmProfile: UmkmProfile;
+  updateUmkmProfile: (updated: Partial<UmkmProfile>) => void;
 
   creditScore: number;
   creditScoreTier: string;
@@ -125,22 +145,40 @@ const demoCampaigns: Campaign[] = [
   },
 ];
 
-const demoContributions: Contribution[] = [
+const defaultContributions: Contribution[] = [
   {
-    id: "act-1",
-    campaignId: "c-demo-1",
-    campaignTitle: "Batik Keraton Solo",
-    category: "Produksi",
-    amount: 5000000,
-    date: "2026-07-25",
-    type: "pledge",
-    status: "Berhasil",
-    image: "https://images.unsplash.com/photo-1606744837616-56c9a5c6a6eb?auto=format&fit=crop&q=80&w=800",
-    progress: 85,
-    daysLeft: 12,
-    target: 50000000,
+    id: "dep-init-101",
+    campaignTitle: "Top Up Saldo (Virtual Account BCA)",
+    category: "Deposit Saldo",
+    amount: 500000,
+    date: new Date().toISOString().split("T")[0],
+    type: "deposit",
+    status: "Pending Admin ACC",
+    proofUrl: "Bukti_Transfer_Struk_BCA.pdf",
+  },
+  {
+    id: "wd-init-102",
+    campaignTitle: "Penarikan Dana (Bank Mandiri - 1380092182)",
+    category: "Tarik Saldo",
+    amount: 200000,
+    date: new Date().toISOString().split("T")[0],
+    type: "withdraw",
+    status: "Pending Admin ACC",
   },
 ];
+
+const defaultUmkmProfile: UmkmProfile = {
+  namaUsaha: "Warung Berkah Sembako & Katering",
+  kategori: "Kuliner & Olahan Makanan",
+  tahunBerdiri: "2021",
+  namaPemilik: "Sri Rahayu",
+  nik: "3273015509820003",
+  email: "warungberkah.bdg@gmail.com",
+  telepon: "+62 812-3456-7890",
+  alamat: "Jl. Merdeka No. 45, Kecamatan Coblong, Kota Bandung, Jawa Barat 40132",
+  deskripsi: "Usaha warung sembako dan penyedia jasa katering rumahan yang melayani kebutuhan konsumsi harian masyarakat sekitar dan acara skala menengah.",
+  logoUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=300&auto=format&fit=crop",
+};
 
 export function ModavaProvider({ children }: { children: React.ReactNode }) {
   const { getToken, isSignedIn } = useAuth();
@@ -150,8 +188,63 @@ export function ModavaProvider({ children }: { children: React.ReactNode }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [legalDocs, setLegalDocs] = useState<LegalDoc[]>(defaultLegalDocs);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [contributions, setContributions] = useState<Contribution[]>([]);
-  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [contributions, setContributions] = useState<Contribution[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("modava_contributions");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch {
+          // fallback
+        }
+      }
+    }
+    return defaultContributions;
+  });
+  const [walletBalance, setWalletBalance] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("modava_wallet_balance");
+      if (saved !== null) {
+        const val = Number(saved);
+        if (!isNaN(val) && val >= 0) return val;
+      }
+    }
+    return 0;
+  });
+  const [umkmProfile, setUmkmProfile] = useState<UmkmProfile>(defaultUmkmProfile);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("modava_contributions", JSON.stringify(contributions));
+      localStorage.setItem("modava_wallet_balance", String(walletBalance));
+    }
+  }, [contributions, walletBalance]);
+
+  // Recalculate wallet balance automatically whenever approved contributions change
+  useEffect(() => {
+    const totalDeposit = contributions
+      .filter((c) => c.type === "deposit" && c.status === "Berhasil")
+      .reduce((sum, c) => sum + c.amount, 0);
+
+    const totalWithdraw = contributions
+      .filter((c) => c.type === "withdraw" && c.status === "Berhasil")
+      .reduce((sum, c) => sum + c.amount, 0);
+
+    const totalPledge = contributions
+      .filter((c) => c.type === "pledge" && c.status === "Berhasil")
+      .reduce((sum, c) => sum + c.amount, 0);
+
+    const calculatedWallet = Math.max(0, totalDeposit - totalWithdraw - totalPledge);
+
+    if (calculatedWallet !== walletBalance) {
+      setWalletBalance(calculatedWallet);
+    }
+  }, [contributions, walletBalance]);
+
+  const updateUmkmProfile = (updated: Partial<UmkmProfile>) => {
+    setUmkmProfile((prev) => ({ ...prev, ...updated }));
+  };
 
   // Load Initial Data from NestJS API Backend with Clerk Token
   useEffect(() => {
@@ -276,9 +369,8 @@ export function ModavaProvider({ children }: { children: React.ReactNode }) {
     setContributions((prev) => [newContrib, ...prev]);
   };
 
-  // Deposit Wallet
-  const depositWallet = (amount: number, method: string) => {
-    setWalletBalance((prev) => prev + amount);
+  // Deposit Wallet (Requires Admin Approval before balance is credited)
+  const depositWallet = (amount: number, method: string, proofUrl?: string) => {
     const newContrib: Contribution = {
       id: `dep-${Date.now()}`,
       campaignTitle: `Top Up Saldo (${method})`,
@@ -286,17 +378,17 @@ export function ModavaProvider({ children }: { children: React.ReactNode }) {
       amount,
       date: new Date().toISOString().split("T")[0],
       type: "deposit",
-      status: "Berhasil",
+      status: "Pending Admin ACC",
+      proofUrl: proofUrl || "Bukti_Transfer_Struk_ATM.pdf",
     };
     setContributions((prev) => [newContrib, ...prev]);
   };
 
-  // Withdraw Wallet
+  // Withdraw Wallet (Requires Admin Approval before balance is deducted)
   const withdrawWallet = (amount: number, bank: string, accountNum: string) => {
     if (amount > walletBalance) {
       return false; // Insufficient balance
     }
-    setWalletBalance((prev) => prev - amount);
     const newContrib: Contribution = {
       id: `wd-${Date.now()}`,
       campaignTitle: `Penarikan Dana (${bank} - ${accountNum})`,
@@ -304,10 +396,35 @@ export function ModavaProvider({ children }: { children: React.ReactNode }) {
       amount,
       date: new Date().toISOString().split("T")[0],
       type: "withdraw",
-      status: "Berhasil",
+      status: "Pending Admin ACC",
     };
     setContributions((prev) => [newContrib, ...prev]);
     return true;
+  };
+
+  // Admin Approve Transaction (ACC Deposit / Withdraw)
+  const approveTransaction = (id: string) => {
+    setContributions((prev) =>
+      prev.map((c) => {
+        if (c.id === id) {
+          if (c.type === "deposit" && c.status !== "Berhasil") {
+            setWalletBalance((wb) => wb + c.amount);
+          }
+          if (c.type === "withdraw" && c.status !== "Berhasil") {
+            setWalletBalance((wb) => Math.max(0, wb - c.amount));
+          }
+          return { ...c, status: "Berhasil" };
+        }
+        return c;
+      })
+    );
+  };
+
+  // Admin Reject Transaction
+  const rejectTransaction = (id: string) => {
+    setContributions((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, status: "Ditolak" } : c))
+    );
   };
 
   // Upload Legal Document
@@ -385,6 +502,10 @@ export function ModavaProvider({ children }: { children: React.ReactNode }) {
         walletBalance,
         depositWallet,
         withdrawWallet,
+        approveTransaction,
+        rejectTransaction,
+        umkmProfile,
+        updateUmkmProfile,
         creditScore,
         creditScoreTier,
         isLoadingApi,

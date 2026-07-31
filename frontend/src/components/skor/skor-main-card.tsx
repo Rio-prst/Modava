@@ -36,7 +36,7 @@ export default function SkorMainCard() {
               y="68"
               textAnchor="middle"
               fill="#0A2328"
-              fontSize="38"
+              fontSize="32"
               fontWeight="800"
               fontFamily="Plus Jakarta Sans, sans-serif"
             >
@@ -44,12 +44,12 @@ export default function SkorMainCard() {
             </text>
             <text
               x="100"
-              y="90"
+              y="96"
               textAnchor="middle"
               fill="#13634E"
-              fontSize="12"
+              fontSize="9"
               fontWeight="800"
-              letterSpacing="1"
+              letterSpacing="0.5"
               fontFamily="Plus Jakarta Sans, sans-serif"
             >
               {labelTier}

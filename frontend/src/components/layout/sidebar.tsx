@@ -13,6 +13,7 @@ import {
   Bell,
   User,
   LogOut,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +29,7 @@ const mainNav = [
 const bottomNav = [
   { label: "Notifikasi", href: "/notifikasi", icon: Bell },
   { label: "Profil", href: "/profil", icon: User },
+  { label: "Portal Admin", href: "/admin", icon: Lock },
 ];
 
 export default function Sidebar() {

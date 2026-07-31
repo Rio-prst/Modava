@@ -14,6 +14,7 @@ export default function KontributorHeroCard() {
   // Form states
   const [depositAmount, setDepositAmount] = useState<number>(500000);
   const [depositMethod, setDepositMethod] = useState<string>("Virtual Account BCA");
+  const [depositProofName, setDepositProofName] = useState<string>("Bukti_Transfer_Struk.pdf");
 
   const [withdrawAmount, setWithdrawAmount] = useState<number>(200000);
   const [withdrawBank, setWithdrawBank] = useState<string>("BCA");
@@ -32,9 +33,9 @@ export default function KontributorHeroCard() {
   const handleDepositSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (depositAmount <= 0) return;
-    depositWallet(depositAmount, depositMethod);
+    depositWallet(depositAmount, depositMethod, depositProofName);
     setShowDepositModal(false);
-    triggerToast(`Berhasil Top Up Deposito Rp ${depositAmount.toLocaleString("id-ID")} via ${depositMethod}!`);
+    triggerToast(`Pengajuan Top Up Rp ${depositAmount.toLocaleString("id-ID")} diajukan! Menunggu ACC Admin Portal.`);
   };
 
   const handleWithdrawSubmit = (e: React.FormEvent) => {
@@ -47,7 +48,7 @@ export default function KontributorHeroCard() {
     const success = withdrawWallet(withdrawAmount, withdrawBank, withdrawAccountNum);
     if (success) {
       setShowWithdrawModal(false);
-      triggerToast(`Penarikan dana Rp ${withdrawAmount.toLocaleString("id-ID")} ke ${withdrawBank} (${withdrawAccountNum}) berhasil diproses!`);
+      triggerToast(`Pengajuan Penarikan Rp ${withdrawAmount.toLocaleString("id-ID")} diajukan! Menunggu ACC Admin Portal.`);
     }
   };
 
@@ -61,60 +62,57 @@ export default function KontributorHeroCard() {
         </div>
       )}
 
-      {/* Main Hero Card */}
-      <div className="relative overflow-hidden bg-[#052530] text-white rounded-3xl p-6 md:p-8 shadow-md border border-slate-800 space-y-6">
-        {/* Background graphic circle overlays */}
-        <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-white/5 rounded-full blur-xl pointer-events-none" />
-        <div className="absolute right-12 -top-12 w-48 h-48 bg-[#86E3CE]/10 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          {/* Left: Balances */}
-          <div className="space-y-4 flex-1">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-300">
-              <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-[#86E3CE]">
-                <Wallet className="w-4 h-4" />
-              </div>
-              <span>Saldo Dompet & Portofolio Kontributor</span>
+      <div className="bg-[#052530] rounded-3xl p-6 sm:p-8 text-white shadow-xl space-y-6">
+        {/* Top Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-semibold border border-emerald-500/30">
+              <Wallet className="w-3.5 h-3.5" /> Dompet Digital Kontributor
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              {/* Card 1: Saldo Tersedia (Deposit) */}
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 space-y-1">
-                <span className="text-[11px] font-semibold text-slate-300">Saldo Dompet Ready</span>
-                <p className="text-2xl md:text-3xl font-bold tracking-tight text-emerald-300">
-                  Rp {walletBalance.toLocaleString("id-ID")}
-                </p>
-                <span className="text-[10px] text-slate-300 block">Siap digunakan untuk pendanaan</span>
-              </div>
-
-              {/* Card 2: Total Kontribusi */}
-              <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 space-y-1">
-                <span className="text-[11px] font-semibold text-slate-300">Total Kontribusi Disalurkan</span>
-                <p className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-                  Rp {totalContributionAmount.toLocaleString("id-ID")}
-                </p>
-                <span className="text-[10px] text-slate-300 block">Tersebar di {uniqueUmkmCount} UMKM</span>
-              </div>
-            </div>
+            <h2 className="text-3xl font-black tracking-tight pt-1">
+              Rp {walletBalance.toLocaleString("id-ID")}
+            </h2>
+            <p className="text-xs text-slate-300">Saldo aktif tersedia untuk kontribusi crowdfunding</p>
           </div>
 
-          {/* Right: Action Buttons (Deposit & Withdraw) */}
-          <div className="flex flex-col sm:flex-row md:flex-col gap-3 justify-center shrink-0">
+          <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={() => setShowDepositModal(true)}
-              className="inline-flex items-center justify-center gap-2 bg-[#13634E] hover:bg-[#0e4b3b] text-white px-5 py-3 rounded-2xl text-xs font-bold transition shadow-md shadow-emerald-900/40 border border-emerald-400/30"
+              className="py-3 px-5 bg-[#13634E] hover:bg-[#0e4b3b] text-white font-bold text-xs rounded-2xl shadow-lg transition flex items-center gap-2 border border-emerald-400/30"
             >
-              <ArrowDownLeft className="w-4 h-4 text-emerald-300" />
-              Isi Saldo (Deposito)
+              <ArrowDownLeft className="w-4 h-4" /> Top Up Saldo
             </button>
 
             <button
               onClick={() => setShowWithdrawModal(true)}
-              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white px-5 py-3 rounded-2xl text-xs font-bold transition border border-white/20"
+              className="py-3 px-5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-2xl transition flex items-center gap-2 border border-white/15 backdrop-blur-md"
             >
-              <ArrowUpRight className="w-4 h-4 text-amber-300" />
-              Tarik Dana (Withdraw)
+              <ArrowUpRight className="w-4 h-4" /> Tarik Dana
             </button>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-medium">
+          <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-1">
+            <span className="text-slate-400 block text-[11px]">Total Kontribusi Aktif</span>
+            <span className="text-lg font-bold text-emerald-300 block">
+              Rp {totalContributionAmount.toLocaleString("id-ID")}
+            </span>
+          </div>
+
+          <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-1">
+            <span className="text-slate-400 block text-[11px]">UMKM Didukung</span>
+            <span className="text-lg font-bold text-white block">
+              {uniqueUmkmCount} Usaha Lokal
+            </span>
+          </div>
+
+          <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-1">
+            <span className="text-slate-400 block text-[11px]">Estimasi Bagi Hasil / th</span>
+            <span className="text-lg font-bold text-amber-300 block">
+              12.5% p.a.
+            </span>
           </div>
         </div>
       </div>
@@ -185,11 +183,29 @@ export default function KontributorHeroCard() {
                 </select>
               </div>
 
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-700">Unggah Bukti Transfer / Resi Pembayaran</label>
+                <input
+                  type="file"
+                  accept="image/*,.pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setDepositProofName(file.name);
+                    }
+                  }}
+                  className="w-full text-xs text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-50 file:text-[#13634E] hover:file:bg-emerald-100 cursor-pointer"
+                />
+                <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 mt-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Terlampir: {depositProofName}
+                </p>
+              </div>
+
               <button
                 type="submit"
                 className="w-full py-3.5 rounded-2xl bg-[#13634E] hover:bg-[#0e4b3b] text-white text-xs font-bold transition shadow-md"
               >
-                Konfirmasi Top Up Saldo
+                Konfirmasi & Ajukan Top Up Saldo
               </button>
             </form>
           </div>
@@ -215,14 +231,9 @@ export default function KontributorHeroCard() {
               </button>
             </div>
 
-            <div className="bg-emerald-50 p-3 rounded-2xl border border-emerald-200 flex items-center justify-between text-xs">
-              <span className="text-emerald-800 font-semibold">Saldo Dompet Tersedia:</span>
-              <strong className="text-emerald-900 font-bold text-sm">Rp {walletBalance.toLocaleString("id-ID")}</strong>
-            </div>
-
             <form onSubmit={handleWithdrawSubmit} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-700">Nominal Penarikan (Rp)</label>
+                <label className="text-xs font-semibold text-gray-700">Jumlah Penarikan (Rp)</label>
                 <input
                   type="text"
                   required
@@ -230,6 +241,9 @@ export default function KontributorHeroCard() {
                   onChange={(e) => setWithdrawAmount(Number(e.target.value.replace(/\D/g, "")) || 0)}
                   className="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm font-bold text-[#0A2328] focus:ring-2 focus:ring-[#13634E]/30 focus:outline-none"
                 />
+                <p className="text-[11px] text-gray-500 mt-1">
+                  Saldo Tersedia: <strong className="text-[#13634E]">Rp {walletBalance.toLocaleString("id-ID")}</strong>
+                </p>
               </div>
 
               <div className="space-y-1">
@@ -247,41 +261,33 @@ export default function KontributorHeroCard() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-700">Nomor Rekening</label>
-                  <input
-                    type="text"
-                    required
-                    value={withdrawAccountNum}
-                    onChange={(e) => setWithdrawAccountNum(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-800 focus:ring-2 focus:ring-[#13634E]/30 focus:outline-none"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-700">Nama Pemilik Rekening</label>
-                  <input
-                    type="text"
-                    required
-                    value={withdrawAccountName}
-                    onChange={(e) => setWithdrawAccountName(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-800 focus:ring-2 focus:ring-[#13634E]/30 focus:outline-none"
-                  />
-                </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-700">Nomor Rekening</label>
+                <input
+                  type="text"
+                  required
+                  value={withdrawAccountNum}
+                  onChange={(e) => setWithdrawAccountNum(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 text-xs font-semibold text-[#0A2328] focus:ring-2 focus:ring-[#13634E]/30 focus:outline-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-gray-700">Nama Pemilik Rekening</label>
+                <input
+                  type="text"
+                  required
+                  value={withdrawAccountName}
+                  onChange={(e) => setWithdrawAccountName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 text-xs font-semibold text-[#0A2328] focus:ring-2 focus:ring-[#13634E]/30 focus:outline-none"
+                />
               </div>
 
               <button
                 type="submit"
-                disabled={withdrawAmount > walletBalance || walletBalance === 0}
-                className={`w-full py-3.5 rounded-2xl text-xs font-bold transition shadow-md ${
-                  withdrawAmount <= walletBalance && walletBalance > 0
-                    ? "bg-[#052530] hover:bg-[#031820] text-white cursor-pointer"
-                    : "bg-gray-200 text-gray-500 cursor-not-allowed border border-gray-300"
-                }`}
+                className="w-full py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-md"
               >
-                {withdrawAmount > walletBalance
-                  ? "Saldo Tidak Mencukupi"
-                  : "Konfirmasi Penarikan Dana"}
+                Ajukan Penarikan Dana
               </button>
             </form>
           </div>

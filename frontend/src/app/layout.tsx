@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ModavaProvider } from "@/context/modava-context";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -21,10 +22,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const bodyContent = (
+  const content = (
     <html lang="id" className={plusJakartaSans.variable}>
       <body className="antialiased font-sans bg-modava-bg text-modava-text-dark">
-        {children}
+        <ModavaProvider>
+          {children}
+        </ModavaProvider>
       </body>
     </html>
   );
@@ -40,11 +43,11 @@ export default function RootLayout({
           },
         }}
       >
-        {bodyContent}
+        {content}
       </ClerkProvider>
     );
   }
 
   // Fallback: Render standard layout if Clerk key is not yet set in .env.local
-  return bodyContent;
+  return content;
 }

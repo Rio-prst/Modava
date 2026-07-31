@@ -112,9 +112,55 @@ export async function createCampaign(
   }, token);
 }
 
+// Pledges & Deposit/Withdraw API
+export async function fetchMyPledges(token?: string | null) {
+  return apiFetch<Record<string, unknown>[]>("/pledges/mine", { method: "GET" }, token);
+}
+
+export async function fetchAdminPendingPledges(token?: string | null) {
+  return apiFetch<Record<string, unknown>[]>("/pledges/admin/pending", { method: "GET" }, token);
+}
+
+export async function createPledgeApi(
+  payload: { campaignId?: string; amount: number; message?: string; proofUrl?: string },
+  token?: string | null
+) {
+  return apiFetch<Record<string, unknown>>("/pledges", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  }, token);
+}
+
+export async function verifyAdminPledgeApi(id: string, token?: string | null) {
+  return apiFetch<Record<string, unknown>>(`/pledges/admin/${id}/verify`, { method: "PATCH" }, token);
+}
+
+export async function rejectAdminPledgeApi(id: string, reason?: string, token?: string | null) {
+  return apiFetch<Record<string, unknown>>(`/pledges/admin/${id}/reject`, {
+    method: "PATCH",
+    body: JSON.stringify({ reason }),
+  }, token);
+}
+
 // Legalitas API
 export async function fetchLegalitasDocuments(token?: string | null) {
   return apiFetch<Record<string, unknown>[]>(`/legalitas/documents`, { method: "GET" }, token);
+}
+
+export async function fetchAdminLegalitasDocuments(token?: string | null) {
+  return apiFetch<Record<string, unknown>[]>(`/legalitas/admin/documents`, { method: "GET" }, token);
+}
+
+export async function verifyAdminLegalitasDocumentApi(
+  id: string,
+  status: "VERIFIED" | "REJECTED",
+  notes?: string,
+  token?: string | null
+) {
+  return apiFetch<Record<string, unknown>>(`/legalitas/admin/documents/${id}/verify`, {
+    method: "PATCH",
+    body: JSON.stringify({ status, notes }),
+  }, token);
 }
 
 export async function calculateUMKMTax(omzet: number) {
@@ -125,6 +171,18 @@ export async function calculateUMKMTax(omzet: number) {
       body: JSON.stringify({ omzet }),
     }
   );
+}
+
+// UMKM Profile API
+export async function fetchUmkmProfile(token?: string | null) {
+  return apiFetch<Record<string, unknown>>("/umkm-profiles/mine", { method: "GET" }, token);
+}
+
+export async function updateUmkmProfileApi(payload: Record<string, unknown>, token?: string | null) {
+  return apiFetch<Record<string, unknown>>("/umkm-profiles/mine", {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  }, token);
 }
 
 /**
