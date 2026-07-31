@@ -15,11 +15,11 @@ export default function DashboardHeader() {
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-100/60 shadow-sm">
       <div>
         <h1 className="text-[24px] md:text-[26px] font-bold text-[#0A2328]">
-          Halo, {displayName}! 👋
+          Halo, {displayName}!
         </h1>
         <p className="text-sm text-[#556061] mt-0.5">
           {transactions.length === 0
-            ? "Selamat datang! Silakan catat transaksi pertama Anda untuk mulai menganalisis keuangan."
+            ? "Silakan catat transaksi pertama Anda untuk mulai menganalisis keuangan."
             : "Berikut laporan perkembangan bisnis Anda hari ini."}
         </p>
       </div>

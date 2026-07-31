@@ -173,7 +173,7 @@ export default function AdminPage() {
                   <div>
                     <h3 className="font-bold text-white text-sm">{sub.umkmName}</h3>
                     <p className="text-xs font-semibold text-emerald-400 mt-0.5">{sub.docName}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">📄 {sub.fileName} • {sub.date}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{sub.fileName} • {sub.date}</p>
                   </div>
                 </div>
 
@@ -315,7 +315,7 @@ export default function AdminPage() {
                             onClick={() => setSelectedProofItem(item)}
                             className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 transition mt-1 underline"
                           >
-                            📷 Lihat Bukti Transfer ({item.proofUrl})
+                            Lihat Bukti Transfer ({item.proofUrl})
                           </button>
                         )}
                       </div>
@@ -387,11 +387,11 @@ export default function AdminPage() {
             {/* Mock Image/Doc Receipt Visual Box */}
             <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 text-center space-y-3">
               <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl">
-                📄
+                <Eye className="w-8 h-8" />
               </div>
               <p className="text-xs font-bold text-white">{selectedProofItem.proofUrl}</p>
               <p className="text-[11px] text-emerald-300 font-semibold bg-emerald-950/60 py-1.5 px-3 rounded-lg inline-block border border-emerald-800/40">
-                ✓ Struk Bukti Transfer Terverifikasi Asli
+                Struk Bukti Transfer Terverifikasi
               </p>
             </div>
 

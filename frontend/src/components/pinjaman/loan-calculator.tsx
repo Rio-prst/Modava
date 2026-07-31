@@ -88,9 +88,6 @@ export function LoanCalculator() {
       <div className="bg-gradient-to-r from-modava-primary-dark via-[#134D3B] to-modava-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-3 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-400/20 backdrop-blur-md rounded-full text-xs font-semibold text-emerald-200 border border-emerald-400/30">
-            <Sparkles className="w-3.5 h-3.5" /> Fitur Integrasi Simulasi Modal PRD [F6]
-          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Simulasi Pinjaman & Analisis Kemampuan Bayar
           </h1>

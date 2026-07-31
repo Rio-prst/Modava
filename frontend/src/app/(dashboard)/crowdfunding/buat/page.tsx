@@ -54,7 +54,7 @@ function CreateCampaignForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!hasMinCashflowRecord) {
-      alert("Aksi ditolak: Riwayat arus kas Anda belum memenuhi syarat minimum 1 bulan (PRD F14). Silakan catat transaksi harian terlebih dahulu.");
+      alert("Aksi ditolak: Riwayat arus kas Anda belum memenuhi syarat minimum 1 bulan. Silakan catat transaksi harian terlebih dahulu.");
       return;
     }
     addCampaign({
@@ -96,11 +96,11 @@ function CreateCampaignForm() {
           </span>
         </div>
 
-        {/* PRD F14 Interactive Toggle Simulator for Evaluation */}
+        {/* Interactive Toggle Simulator for Evaluation */}
         <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 font-bold text-slate-700">
             <History className="w-4 h-4 text-modava-primary" />
-            <span>Simulasi Ambang Riwayat Cashflow (PRD F14):</span>
+            <span>Simulasi Kualifikasi Arus Kas:</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -112,7 +112,7 @@ function CreateCampaignForm() {
                   : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
               }`}
             >
-              ✓ Lolos (&gt;1 Bulan Aktif)
+              Lolos (&gt;1 Bulan Aktif)
             </button>
             <button
               type="button"
@@ -123,18 +123,18 @@ function CreateCampaignForm() {
                   : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
               }`}
             >
-              🔒 Terkunci (&lt;1 Bulan)
+              Terkunci (&lt;1 Bulan)
             </button>
           </div>
         </div>
 
-        {/* PRD F6 Simulation Banner Notice */}
+        {/* Simulation Banner Notice */}
         {fromSimulation && (
           <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 flex items-start gap-3 text-xs text-emerald-950">
             <Sparkles className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
             <div>
               <span className="font-bold text-emerald-900 block text-sm">
-                Terhubung dari Simulasi Pinjaman (PRD F6)
+                Terhubung dari Simulasi Pinjaman
               </span>
               <span>
                 Target modal <strong>Rp {Number(initialAmount).toLocaleString("id-ID")}</strong> dan tenor <strong>{initialTenor} Bulan</strong> telah diisi secara otomatis dari hasil kalkulasi kemampuan bayar (DSCR) Anda.
@@ -143,12 +143,12 @@ function CreateCampaignForm() {
           </div>
         )}
 
-        {/* PRD F14 Cash Flow Validation Notice */}
+        {/* Cash Flow Validation Notice */}
         {hasMinCashflowRecord ? (
           <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex items-center gap-3 text-xs text-emerald-900 font-medium">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <div>
-              <strong>Syarat Minimum Terpenuhi (PRD F14):</strong> Riwayat pencatatan arus kas Anda aktif selama{" "}
+              <strong>Syarat Minimum Terpenuhi:</strong> Riwayat pencatatan arus kas Anda aktif selama{" "}
               <span className="underline font-bold">{cashflowMonthCount} bulan berturut-turut</span>. Anda memenuhi kualifikasi pembuatan campaign.
             </div>
           </div>
@@ -156,7 +156,7 @@ function CreateCampaignForm() {
           <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-start gap-3 text-xs text-rose-900">
             <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             <div>
-              <strong className="block text-rose-950 text-sm mb-0.5">Syarat Minimum Belum Terpenuhi (PRD F14):</strong>
+              <strong className="block text-rose-950 text-sm mb-0.5">Syarat Minimum Belum Terpenuhi:</strong>
               Sesuai aturan platform Modava, UMKM wajib memiliki minimal <strong>1 bulan (30 hari)</strong> riwayat pencatatan aktif di{" "}
               <Link href="/cash-flow" className="underline font-bold hover:text-rose-950">Cash Flow Tracker</Link> sebelum diizinkan menerbitkan campaign permodal baru.
             </div>
@@ -278,7 +278,7 @@ function CreateCampaignForm() {
             </>
           ) : (
             <>
-              <Lock className="w-5 h-5 text-rose-600" /> Terkunci — Diperlukan Minimal 1 Bulan Arus Kas (PRD F14)
+              <Lock className="w-5 h-5 text-rose-600" /> Terkunci — Diperlukan Minimal 1 Bulan Arus Kas
             </>
           )}
         </button>

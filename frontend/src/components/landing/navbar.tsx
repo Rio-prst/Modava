@@ -72,9 +72,8 @@ export default function Navbar() {
                   </Link>
                   <Link
                     href="/daftar"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-modava-primary to-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md hover:from-emerald-700 hover:to-modava-primary transition-all group"
+                    className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-modava-primary to-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md hover:from-emerald-700 hover:to-modava-primary transition-all group"
                   >
-                    <Sparkles className="w-4 h-4 text-emerald-200 group-hover:rotate-12 transition-transform" />
                     Daftar Sekarang
                   </Link>
                 </SignedOut>
@@ -89,9 +88,8 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/daftar"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-modava-primary to-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md hover:from-emerald-700 hover:to-modava-primary transition-all group"
+                  className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-modava-primary to-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md hover:from-emerald-700 hover:to-modava-primary transition-all group"
                 >
-                  <Sparkles className="w-4 h-4 text-emerald-200 group-hover:rotate-12 transition-transform" />
                   Daftar Sekarang
                 </Link>
               </>

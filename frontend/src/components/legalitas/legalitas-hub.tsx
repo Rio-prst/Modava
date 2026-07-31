@@ -329,7 +329,7 @@ export function LegalitasHub() {
                       <h3 className="font-bold text-slate-900 text-sm">{doc.name}</h3>
                       {doc.file ? (
                         <p className="text-xs text-emerald-700 font-medium mt-0.5 flex items-center gap-1">
-                          📄 {doc.file} ({doc.date})
+                          {doc.file} ({doc.date})
                         </p>
                       ) : (
                         <p className="text-xs text-slate-400 mt-0.5">Belum ada dokumen yang diunggah</p>
@@ -421,7 +421,7 @@ export function LegalitasHub() {
                           {guide.badge}
                         </span>
                         <span className="text-[11px] font-semibold text-slate-500">
-                          ⏱️ Estimasi: {guide.duration} • 💰 Biaya: {guide.cost}
+                          Estimasi: {guide.duration} • Biaya: {guide.cost}
                         </span>
                       </div>
                       <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
@@ -454,7 +454,7 @@ export function LegalitasHub() {
                     <div className="p-6 border-t border-slate-100 bg-slate-50/40 space-y-6 text-xs">
                       {/* Description full */}
                       <p className="text-slate-700 leading-relaxed font-medium bg-white p-4 rounded-xl border border-slate-200/80">
-                        💡 {guide.description}
+                        {guide.description}
                       </p>
 
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -569,7 +569,7 @@ export function LegalitasHub() {
                 {isTaxExempt ? (
                   <div className="space-y-2">
                     <span className="px-3 py-1 bg-emerald-400/20 text-emerald-200 rounded-full text-xs font-bold inline-block">
-                      🎉 Bebas Pajak (UU HPP 2022)
+                      Bebas Pajak (UU HPP 2022)
                     </span>
                     <p className="text-3xl font-extrabold text-emerald-300">Rp 0 / bulan</p>
                     <p className="text-xs text-slate-300">
@@ -639,7 +639,7 @@ export function LegalitasHub() {
                       : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                   }`}
                 >
-                  📄 SKU (Surat Keterangan Usaha)
+                  SKU (Surat Keterangan Usaha)
                 </button>
 
                 <button
@@ -650,7 +650,7 @@ export function LegalitasHub() {
                       : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                   }`}
                 >
-                  🕌 Surat Kehalalan (BPJPH)
+                  Surat Kehalalan (BPJPH)
                 </button>
 
                 <button
@@ -661,7 +661,7 @@ export function LegalitasHub() {
                       : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                   }`}
                 >
-                  🥣 Surat Komitmen P-IRT (BPOM)
+                  Surat Komitmen P-IRT (BPOM)
                 </button>
 
                 <button
@@ -672,7 +672,7 @@ export function LegalitasHub() {
                       : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                   }`}
                 >
-                  💰 Surat Keterangan Omzet
+                  Surat Keterangan Omzet
                 </button>
 
                 <button
@@ -683,7 +683,7 @@ export function LegalitasHub() {
                       : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                   }`}
                 >
-                  🏠 Surat Domisili Usaha (SKDU)
+                  Surat Domisili Usaha (SKDU)
                 </button>
               </div>
             </div>
