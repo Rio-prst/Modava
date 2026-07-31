@@ -24,7 +24,7 @@ export default function KontributorHeader({
   const [notifications, setNotifications] = useState([
     {
       id: "n-1",
-      title: "Dividen Bagi Hasil Cair 🎉",
+      title: "Dividen Bagi Hasil Cair",
       message: "Imbal hasil bulan ini sebesar Rp 750.000 dari Warung Berkah telah masuk ke saldo dompet.",
       time: "15 min lalu",
       read: false,
@@ -32,7 +32,7 @@ export default function KontributorHeader({
     },
     {
       id: "n-2",
-      title: "Target Campaign 90% Terpenuhi 🚀",
+      title: "Target Campaign 90% Terpenuhi",
       message: "Campaign 'Batik Keraton Solo' hampir mencapai target pendanaan modal.",
       time: "2 jam lalu",
       read: false,
@@ -58,7 +58,7 @@ export default function KontributorHeader({
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-[#0A2328]">
-          Selamat Datang, {userName} 👋
+          Halo, {userName}!
         </h1>
         <p className="text-sm text-[#556061] mt-1">
           Lihat perkembangan kontribusi modal UMKM Anda hari ini.

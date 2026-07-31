@@ -70,7 +70,7 @@ export default function NotifikasiPage() {
       <div className="bg-gradient-to-r from-modava-primary-dark via-[#134D3B] to-modava-primary rounded-3xl p-6 sm:p-8 text-white shadow-xl flex items-center justify-between">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-400/20 text-emerald-200 text-xs font-bold rounded-full border border-emerald-400/30 mb-2">
-            <Bell className="w-3.5 h-3.5" /> Notifikasi In-App PRD [F7]
+            <Bell className="w-3.5 h-3.5" /> Pusat Informasi & Aktivitas
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold">Pusat Notifikasi</h1>
           <p className="text-xs text-emerald-100/90 mt-1">

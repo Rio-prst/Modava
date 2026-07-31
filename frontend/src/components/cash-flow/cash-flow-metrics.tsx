@@ -69,12 +69,12 @@ export default function CashFlowMetrics({ transactions }: CashFlowMetricsProps) 
             Rp {netProfit.toLocaleString("id-ID")}
           </p>
           <p className="text-[11px] font-medium opacity-85 mt-1">
-            {netProfit >= 0 ? "Kondisi Keuangan Sehat ✨" : "Defisit Arus Kas Warning ⚠️"}
+            {netProfit >= 0 ? "Kondisi Keuangan Sehat" : "Defisit Arus Kas Warning"}
           </p>
         </div>
       </div>
 
-      {/* Status Ambang Syarat Campaign PRD [F14] */}
+      {/* Status Ambang Syarat Campaign */}
       <div className="bg-[#FAF8F5] rounded-2xl p-5 border border-emerald-200/60 shadow-sm space-y-2 flex flex-col justify-between">
         <div className="flex items-center gap-2 text-emerald-700 font-bold text-xs">
           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
