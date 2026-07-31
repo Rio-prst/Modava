@@ -689,13 +689,47 @@ async function main() {
   console.log('Seeding Pledges...');
 
   const contributorUser = createdUsers['clerk_demo_contributor'];
+  const kerajinanUser = createdUsers['clerk_demo_kerajinan'];
 
-  await prisma.pledge.create({
-    data: {
+  await prisma.pledge.upsert({
+    where: { id: 'pledge_demo_verified_0001' },
+    update: {
       campaignId: campaignWarung.id,
       userId: contributorUser.id,
       amount: '3500000',
       message: 'Semangat buka cabang barunya! 🙌',
+      status: 'VERIFIED',
+    },
+    create: {
+      id: 'pledge_demo_verified_0001',
+      campaignId: campaignWarung.id,
+      userId: contributorUser.id,
+      amount: '3500000',
+      message: 'Semangat buka cabang barunya! 🙌',
+      status: 'VERIFIED',
+    },
+  });
+
+  await prisma.pledge.upsert({
+    where: { id: 'pledge_demo_pending_0001' },
+    update: {
+      campaignId: campaignWarung.id,
+      userId: kerajinanUser.id,
+      amount: '2000000',
+      message: 'Ikut mendukung perluasan warung!',
+      status: 'PENDING',
+      proofUrl:
+        'https://storage.modava.id/demo/pledges/bukti-transfer-demo.jpg',
+    },
+    create: {
+      id: 'pledge_demo_pending_0001',
+      campaignId: campaignWarung.id,
+      userId: kerajinanUser.id,
+      amount: '2000000',
+      message: 'Ikut mendukung perluasan warung!',
+      status: 'PENDING',
+      proofUrl:
+        'https://storage.modava.id/demo/pledges/bukti-transfer-demo.jpg',
     },
   });
 
